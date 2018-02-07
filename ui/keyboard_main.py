@@ -1,11 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QFrame, QPushButton, QDesktopWidget
-from PyQt5.QtCore import pyqtSlot, QPointF, QRect
+from PyQt5.QtCore import pyqtSlot, QPointF, QRect, Qt
 from keyboard_ag import Ui_ag
 from keyboard_hn import Ui_hn
 from keyboard_ou import Ui_ou
 from keyboard_vz import Ui_vz
-from threading import Timer
 
 class Ui_MainWindow(object):
     def openWindow(self, next_win, cur_win):
@@ -62,6 +61,8 @@ class Ui_MainWindow(object):
                       "border-radius: 0px;\n" \
                       "}"
 
+        self.userStr = ""
+
         # Create and place objects
         self.pushButton = QtWidgets.QPushButton(MainWindow)
         self.pushButton.setGeometry(QRect(border.x(), self.screen.y() - border.y()*2 - btnSizeCir.y()*2, btnSizeCir.x(), btnSizeCir.y()))
@@ -109,6 +110,7 @@ class Ui_MainWindow(object):
         
         self.textBrowser = QtWidgets.QTextBrowser(MainWindow)
         self.textBrowser.setGeometry(QtCore.QRect(btnSizeCor.x(), 0, self.screen.x() - btnSizeCor.x()*2, btnSizeCor.y()))
+        self.textBrowser.setText(self.userStr)
         self.textBrowser.setObjectName("textBrowser")
         
         self.pushButton_9 = QtWidgets.QPushButton(MainWindow)
@@ -127,17 +129,17 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "EyeTalk"))
-        self.pushButton.setText(_translate("MainWindow", "PredictedWord1"))
-        self.pushButton_2.setText(_translate("MainWindow", "PredictedWord2"))
-        self.pushButton_3.setText(_translate("MainWindow", "PredictedWord3"))
-        self.pushButton_4.setText(_translate("MainWindow", "Numbers or Symbols"))
-        self.pushButton_5.setText(_translate("MainWindow", "A B C D E F G\nSpace"))
-        self.pushButton_6.setText(_translate("MainWindow", "H I J K L M N\nBackspace"))
-        self.pushButton_7.setText(_translate("MainWindow", "O P Q R S T U\nCaps"))
-        self.pushButton_8.setText(_translate("MainWindow", "V W X Y Z\n. ? !"))
-        self.pushButton_9.setText(_translate("MainWindow", "Exit"))
-        self.pushButton_10.setText(_translate("MainWindow", "Confirm"))
+        MainWindow.setWindowTitle("EyeTalk")
+        self.pushButton.setText("PredictedWord1")
+        self.pushButton_2.setText("PredictedWord2")
+        self.pushButton_3.setText("PredictedWord3")
+        self.pushButton_4.setText("Numbers or Symbols")
+        self.pushButton_5.setText("A B C D E F G\nSpace")
+        self.pushButton_6.setText("H I J K L M N\nBackspace")
+        self.pushButton_7.setText("O P Q R S T U\nCaps")
+        self.pushButton_8.setText("V W X Y Z\n. ? !")
+        self.pushButton_9.setText("Exit")
+        self.pushButton_10.setText("Confirm")
 
 
 
