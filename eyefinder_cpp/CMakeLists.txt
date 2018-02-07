@@ -61,7 +61,6 @@ else()
    find_package(OpenCV QUIET)
    if (OpenCV_FOUND)
       include_directories(${OpenCV_INCLUDE_DIRS})
-
       add_executable(eyefinder main.cpp eyefinder.cpp findEyeCenter.cpp findEyeCorner.cpp helpers.cpp)
       target_link_libraries(eyefinder dlib::dlib ${OpenCV_LIBS} )
    else()

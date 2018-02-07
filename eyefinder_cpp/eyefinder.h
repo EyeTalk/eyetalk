@@ -41,8 +41,15 @@
 #include "findEyeCenter.h"
 #include "findEyeCorner.h"
 
-#define DEBUG 1
-#define DEBUG_TB 1
+#ifndef EF_DEBUG
+  #define EF_DEBUG 0
+#endif
+#ifndef EF_DEBUG_TB
+  #define EF_DEBUG_TB 0
+#endif
+#ifndef EF_DEBUG_FA
+  #define EF_DEBUG_FA 0
+#endif
 #define MACRO_START (begin = std::chrono::steady_clock::now())
 #define MACRO_END (end = std::chrono::steady_clock::now())
 #define MACRO_P_DIFF(MSG)                                                      \

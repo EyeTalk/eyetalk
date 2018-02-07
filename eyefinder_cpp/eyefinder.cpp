@@ -69,7 +69,7 @@ int _EF_::EyeFinder::start(void) {
     dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> pose_model;
 
     // Grab and process frames until the main window is closed by the user.
-#if DEBUG
+#if EF_DEBUG
     int i = 0;
     cv::namedWindow("LALALA", cv::WINDOW_AUTOSIZE);
     while (i++ < 100) {
@@ -165,7 +165,7 @@ std::tuple<long, long, long, long> _EF_::EyeFinder::setMinAndMax(
 // getROI
 cv::Rect _EF_::EyeFinder::getROI(std::tuple<long, long, long, long> &tp,
                                  cv::Mat frame) {
-#if DEBUG
+#if EF_DEBUG
   std::cout << "_EF_::EyeFinder::getROI" << std::get<0>(tp) << " "
             << std::get<1>(tp) << " " << std::get<2>(tp) << " "
             << std::get<3>(tp) << std::endl;
@@ -225,7 +225,7 @@ void _EF_::EyeFinder::calculateFaceAngles(
     theta = (90 - angle * (180.0 / M_PI));
     if (signbit(nose_x_offset))
       theta *= -1;
-#if DEBUG
+#if EF_DEBUG_FA
     std::cout << "angle: " << angle << std::endl;
     std::cout << "theta: " << theta << std::endl;
 #endif
@@ -351,7 +351,7 @@ void _EF_::EyeFinder::calculatePupilsEL(
   facial_features_vec.push_back((long)real_rightPupil_x);
   facial_features_vec.push_back((long)real_rightPupil_y);
 
-#if DEBUG_TB
+#if EF_DEBUG_TB
   cv::circle(temp, cv::Point(real_leftPupil_x, real_leftPupil_y), 1,
              cv::Scalar(255, 255, 255, 255));
   cv::circle(temp, cv::Point(real_rightPupil_x, real_rightPupil_y), 1,
