@@ -9,12 +9,20 @@ from keyboard_vz import Ui_vz
 class Ui_MainWindow(object):
     def openWindow(self, next_win, cur_win):
         if next_win == "ag":
+            textBrowser = self.agWidget.findChild(QtWidgets.QTextBrowser)
+            textBrowser.setText(self.textBrowser.toPlainText())
             self.agWidget.showFullScreen()
         elif next_win == "hn":
+            textBrowser = self.hnWidget.findChild(QtWidgets.QTextBrowser)
+            textBrowser.setText(self.textBrowser.toPlainText())
             self.hnWidget.showFullScreen()
         elif next_win == "ou":
+            textBrowser = self.ouWidget.findChild(QtWidgets.QTextBrowser)
+            textBrowser.setText(self.textBrowser.toPlainText())
             self.ouWidget.showFullScreen()
         elif next_win == "vz":
+            textBrowser = self.vzWidget.findChild(QtWidgets.QTextBrowser)
+            textBrowser.setText(self.textBrowser.toPlainText())
             self.vzWidget.showFullScreen()
         #cur_win.hide()
 
