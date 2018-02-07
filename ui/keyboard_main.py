@@ -5,6 +5,7 @@ from keyboard_ag import Ui_ag
 from keyboard_hn import Ui_hn
 from keyboard_ou import Ui_ou
 from keyboard_vz import Ui_vz
+from threading import Timer
 
 class Ui_MainWindow(object):
     def openWindow(self, next_win, cur_win):
@@ -16,7 +17,7 @@ class Ui_MainWindow(object):
             self.ouWidget.showFullScreen()
         elif next_win == "vz":
             self.vzWidget.showFullScreen()
-        cur_win.hide()
+        #cur_win.hide()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -126,7 +127,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "EyeTalk"))
         self.pushButton.setText(_translate("MainWindow", "PredictedWord1"))
         self.pushButton_2.setText(_translate("MainWindow", "PredictedWord2"))
         self.pushButton_3.setText(_translate("MainWindow", "PredictedWord3"))
@@ -143,7 +144,7 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    keyboard_main = QtWidgets.QWidget()
+    keyboard_main = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(keyboard_main)
     keyboard_main.showFullScreen()

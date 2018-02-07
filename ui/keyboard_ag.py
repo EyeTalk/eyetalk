@@ -95,7 +95,7 @@ class Ui_ag(object):
 
     def retranslateUi(self, OtherWindow):
         _translate = QtCore.QCoreApplication.translate
-        OtherWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        OtherWindow.setWindowTitle(_translate("MainWindow", "Eyetalk A-G"))
         self.pushButton.setText(_translate("MainWindow", "A"))
         self.pushButton_2.setText(_translate("MainWindow", "B"))
         self.pushButton_3.setText(_translate("MainWindow", "C"))

@@ -95,7 +95,7 @@ class Ui_ou(object):
 
     def retranslateUi(self, OtherWindow):
         _translate = QtCore.QCoreApplication.translate
-        OtherWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        OtherWindow.setWindowTitle(_translate("MainWindow", "EyeTalk O-U"))
         self.pushButton.setText(_translate("MainWindow", "O"))
         self.pushButton_2.setText(_translate("MainWindow", "P"))
         self.pushButton_3.setText(_translate("MainWindow", "Q"))

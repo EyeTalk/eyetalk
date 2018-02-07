@@ -95,7 +95,7 @@ class Ui_vz(object):
 
     def retranslateUi(self, OtherWindow):
         _translate = QtCore.QCoreApplication.translate
-        OtherWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        OtherWindow.setWindowTitle(_translate("MainWindow", "EyeTalk V-Z"))
         self.pushButton.setText(_translate("MainWindow", "V"))
         self.pushButton_2.setText(_translate("MainWindow", "W"))
         self.pushButton_3.setText(_translate("MainWindow", "X"))
