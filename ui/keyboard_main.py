@@ -1,21 +1,21 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QFrame, QPushButton, QDesktopWidget
 from PyQt5.QtCore import pyqtSlot, QPointF, QRect
-from keyboard_abcdef import Ui_abcdef
-from keyboard_ghijkl import Ui_ghijkl
-from keyboard_mnopqr import Ui_mnopqr
-from keyboard_stuvwxyz import Ui_stuvwxyz
+from keyboard_ag import Ui_ag
+from keyboard_hn import Ui_hn
+from keyboard_ou import Ui_ou
+from keyboard_vz import Ui_vz
 
 class Ui_MainWindow(object):
     def openWindow(self, next_win, cur_win):
-        if next_win == "abcdef":
-            self.abcdefWidget.showFullScreen()
-        elif next_win == "ghijkl":
-            self.ghijklWidget.showFullScreen()
-        elif next_win == "mnopqr":
-            self.mnopqrWidget.showFullScreen()
-        elif next_win == "stuvwxyz":
-            self.stuvwxyzWidget.showFullScreen()
+        if next_win == "ag":
+            self.agWidget.showFullScreen()
+        elif next_win == "hn":
+            self.hnWidget.showFullScreen()
+        elif next_win == "ou":
+            self.ouWidget.showFullScreen()
+        elif next_win == "vz":
+            self.vzWidget.showFullScreen()
         cur_win.hide()
 
     def setupUi(self, MainWindow):
@@ -26,18 +26,18 @@ class Ui_MainWindow(object):
         MainWindow.resize(self.screen.x(), self.screen.y())
 
         # Setup UIs for each letter range
-        self.abcdefWidget = QtWidgets.QWidget()
-        self.abcdef = Ui_abcdef(MainWindow)
-        self.abcdef.setupUi(self.abcdefWidget)
-        self.ghijklWidget = QtWidgets.QWidget()
-        self.ghijkl = Ui_ghijkl(MainWindow)
-        self.ghijkl.setupUi(self.ghijklWidget)
-        self.mnopqrWidget = QtWidgets.QWidget()
-        self.mnopqr = Ui_mnopqr(MainWindow)
-        self.mnopqr.setupUi(self.mnopqrWidget)
-        self.stuvwxyzWidget = QtWidgets.QWidget()
-        self.stuvwxyz = Ui_stuvwxyz(MainWindow)
-        self.stuvwxyz.setupUi(self.stuvwxyzWidget)
+        self.agWidget = QtWidgets.QWidget()
+        self.ag = Ui_ag(MainWindow)
+        self.ag.setupUi(self.agWidget)
+        self.hnWidget = QtWidgets.QWidget()
+        self.hn = Ui_hn(MainWindow)
+        self.hn.setupUi(self.hnWidget)
+        self.ouWidget = QtWidgets.QWidget()
+        self.ou = Ui_ou(MainWindow)
+        self.ou.setupUi(self.ouWidget)
+        self.vzWidget = QtWidgets.QWidget()
+        self.vz = Ui_vz(MainWindow)
+        self.vz.setupUi(self.vzWidget)
 
         # Calculate borders and button sizes based on screen size
         border = self.screen * 0.05
@@ -86,25 +86,25 @@ class Ui_MainWindow(object):
         self.pushButton_5.setGeometry(QtCore.QRect(border.x(), self.screen.y() - border.y() - btnSizeCir.y(), btnSizeCir.x(), btnSizeCir.y()))
         self.pushButton_5.setStyleSheet(btnStyleCir)
         self.pushButton_5.setObjectName("pushButton_5")
-        self.pushButton_5.clicked.connect(lambda: self.openWindow("abcdef", MainWindow))
+        self.pushButton_5.clicked.connect(lambda: self.openWindow("ag", MainWindow))
 
         self.pushButton_6 = QtWidgets.QPushButton(MainWindow)
         self.pushButton_6.setGeometry(QtCore.QRect(border.x()*2 + btnSizeCir.x(), self.screen.y() - border.y() - btnSizeCir.y(), btnSizeCir.x(), btnSizeCir.y()))
         self.pushButton_6.setStyleSheet(btnStyleCir)
         self.pushButton_6.setObjectName("pushButton_6")
-        self.pushButton_6.clicked.connect(lambda: self.openWindow("ghijkl", MainWindow))
+        self.pushButton_6.clicked.connect(lambda: self.openWindow("hn", MainWindow))
         
         self.pushButton_7 = QtWidgets.QPushButton(MainWindow)
         self.pushButton_7.setGeometry(QtCore.QRect(border.x()*3 + btnSizeCir.x()*2, self.screen.y() - border.y() - btnSizeCir.y(), btnSizeCir.x(), btnSizeCir.y()))
         self.pushButton_7.setStyleSheet(btnStyleCir)
         self.pushButton_7.setObjectName("pushButton_7")
-        self.pushButton_7.clicked.connect(lambda: self.openWindow("mnopqr", MainWindow))
+        self.pushButton_7.clicked.connect(lambda: self.openWindow("ou", MainWindow))
         
         self.pushButton_8 = QtWidgets.QPushButton(MainWindow)
         self.pushButton_8.setGeometry(QtCore.QRect(border.x()*4 + btnSizeCir.x()*3, self.screen.y() - border.y() - btnSizeCir.y(), btnSizeCir.x(), btnSizeCir.y()))
         self.pushButton_8.setStyleSheet(btnStyleCir)
         self.pushButton_8.setObjectName("pushButton_8")
-        self.pushButton_8.clicked.connect(lambda: self.openWindow("stuvwxyz", MainWindow))
+        self.pushButton_8.clicked.connect(lambda: self.openWindow("vz", MainWindow))
         
         self.textBrowser = QtWidgets.QTextBrowser(MainWindow)
         self.textBrowser.setGeometry(QtCore.QRect(btnSizeCor.x(), 0, self.screen.x() - btnSizeCor.x()*2, btnSizeCor.y()))
@@ -131,10 +131,10 @@ class Ui_MainWindow(object):
         self.pushButton_2.setText(_translate("MainWindow", "PredictedWord2"))
         self.pushButton_3.setText(_translate("MainWindow", "PredictedWord3"))
         self.pushButton_4.setText(_translate("MainWindow", "Numbers or Symbols"))
-        self.pushButton_5.setText(_translate("MainWindow", "A B C D E F"))
-        self.pushButton_6.setText(_translate("MainWindow", "G H I J K L"))
-        self.pushButton_7.setText(_translate("MainWindow", "M N O P Q R"))
-        self.pushButton_8.setText(_translate("MainWindow", "S T U V W X Y Z"))
+        self.pushButton_5.setText(_translate("MainWindow", "A B C D E F G\nSpace"))
+        self.pushButton_6.setText(_translate("MainWindow", "H I J K L M N\nBackspace"))
+        self.pushButton_7.setText(_translate("MainWindow", "O P Q R S T U\nCaps"))
+        self.pushButton_8.setText(_translate("MainWindow", "V W X Y Z\n. ? !"))
         self.pushButton_9.setText(_translate("MainWindow", "Exit"))
         self.pushButton_10.setText(_translate("MainWindow", "Confirm"))
 

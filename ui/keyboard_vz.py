@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QFrame, QPushButton, QDesktopWidget
 from PyQt5.QtCore import pyqtSlot, QPointF, QRect
 
-class Ui_stuvwxyz(object):
+class Ui_vz(object):
     def __init__(self, parent):
         self.parent = parent
         
@@ -40,7 +40,7 @@ class Ui_stuvwxyz(object):
                       "border-radius: 0px;\n" \
                       "}"
         
-		# Create and place objects
+	# Create and place objects
         self.pushButton = QtWidgets.QPushButton(OtherWindow)
         self.pushButton.setGeometry(QRect(border.x(), self.screen.y() - border.y()*2 - btnSizeCir.y()*2, btnSizeCir.x(), btnSizeCir.y()))
         self.pushButton.setStyleSheet(btnStyleCir)
@@ -96,12 +96,12 @@ class Ui_stuvwxyz(object):
     def retranslateUi(self, OtherWindow):
         _translate = QtCore.QCoreApplication.translate
         OtherWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton.setText(_translate("MainWindow", "S"))
-        self.pushButton_2.setText(_translate("MainWindow", "T"))
-        self.pushButton_3.setText(_translate("MainWindow", "U"))
-        self.pushButton_4.setText(_translate("MainWindow", "V"))
-        self.pushButton_5.setText(_translate("MainWindow", "W"))
-        self.pushButton_6.setText(_translate("MainWindow", "X"))
-        self.pushButton_7.setText(_translate("MainWindow", "Y"))
-        self.pushButton_8.setText(_translate("MainWindow", "Z"))
+        self.pushButton.setText(_translate("MainWindow", "V"))
+        self.pushButton_2.setText(_translate("MainWindow", "W"))
+        self.pushButton_3.setText(_translate("MainWindow", "X"))
+        self.pushButton_4.setText(_translate("MainWindow", "Y"))
+        self.pushButton_5.setText(_translate("MainWindow", "Z"))
+        self.pushButton_6.setText(_translate("MainWindow", "."))
+        self.pushButton_7.setText(_translate("MainWindow", "?"))
+        self.pushButton_8.setText(_translate("MainWindow", "!"))
         self.pushButton_9.setText(_translate("MainWindow", "Back"))
