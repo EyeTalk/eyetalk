@@ -5,6 +5,7 @@ from PyQt5.QtCore import (QObject, QPointF, QTimer,
         QPropertyAnimation, pyqtProperty, Qt)
 import sys
 from GazeDetector import GazeDetector
+from pymongo import MongoClient
 
 
 class Ball(QObject):
@@ -150,15 +151,33 @@ class Example(QGraphicsView):
         if self.dataSent:
             app.quit()
 
+    def format_data_for_machine_learning(self, data):
+        final_data = []
+        final_labels = []
+
+        last_id = -1
+
+        for x, y in data:
+            data_id = x[0]
+            if data_id == last_id:
+                label = self.test_mapping(y)
+                final_data.append(x[1:])
+                final_labels.append(label)
+
+            last_id = data_id
+
+        return final_data, final_labels
+
+
     def sendData(self):
-        self.dataSent = True
+        # self.dataSent = True
 
-        # TODO: Implement data send to database
+        client = MongoClient(host=['ds231228.mlab.com'], port=31228, username='JohnH', password='johnhoward')
+        db = client['eyedata-devel']
 
-        for x, y in self.data:
-            print(x)
-            print(self.test_mapping(y))
-            print()
+        data_to_send = [{'x': x, 'y': y} for x, y in self.data]
+        db.test.insert_many(data_to_send)
+
 
     def test_mapping(self, label_data):
         x, y, width, height = label_data
@@ -167,14 +186,14 @@ class Example(QGraphicsView):
 
         if x_pct < 0.5:
             if y_pct < 0.5:
+                return 0
+            else:
+                return 2
+        else:
+            if y_pct < 0.5:
                 return 1
             else:
                 return 3
-        else:
-            if y_pct < 0.5:
-                return 2
-            else:
-                return 4
 
     def sample_features(self):
         current_pos = self.ball.pixmap_item.scenePos()

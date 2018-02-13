@@ -1,13 +1,13 @@
 import os
 import atexit
 import numpy as np
-from itertools import chain, product
-from keras.models import Sequential
-from keras.layers import Dense, Activation
-from keras.optimizers import SGD
 import subprocess as sp
 from time import sleep
 from ipc_reader import IPCReader
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.optimizers import SGD
+from keras.utils.np_utils import to_categorical
 
 
 class GazeDetector:
@@ -29,9 +29,9 @@ class GazeDetector:
 
     def init_model(self):
         model = Sequential()
-        model.add(Dense(20, input_dim=30, kernel_initializer='uniform', activation='relu'))
-        model.add(Dense(20, kernel_initializer='uniform', activation='relu'))
-        model.add(Activation("softmax"))
+        model.add(Dense(20, input_shape=(30,), kernel_initializer='uniform', activation='sigmoid'))
+        model.add(Dense(20, kernel_initializer='uniform', activation='sigmoid'))
+        model.add(Dense(4, activation="softmax"))
         model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01))
         self.neural_network = model
 
@@ -78,19 +78,17 @@ class GazeDetector:
         prediction_vals = self.neural_network.predict(features)
         return prediction_vals
 
-    def train_location_classifier(self, data, num_epochs=128):
+    def train_location_classifier(self, data, labels, num_epochs=100):
         """
         Train location classifier using data
         :param data: a ndarray of shape(N, 30) of N rows of numerical features
         :param num_epochs: an integer number for how many iterations through all the data the training will do
         """
 
-        # split data into X and Y (data and labels)
+        np_data = np.asarray(data)
+        categorical_labels = to_categorical(labels)
 
-        training_data = None
-        training_labels = None
-
-        self.neural_network.fit(training_data, training_labels, num_epochs, batch_size=128)
+        self.neural_network.fit(np_data, categorical_labels, num_epochs)
 
 
 if __name__ == '__main__':
