@@ -1,7 +1,6 @@
-import math
-import numpy as np
-import atexit
 import os
+import atexit
+import numpy as np
 import subprocess as sp
 from time import sleep
 from ipc_reader import IPCReader

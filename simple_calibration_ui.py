@@ -5,7 +5,6 @@ from PyQt5.QtCore import (QObject, QPointF, QTimer,
         QPropertyAnimation, pyqtProperty, Qt)
 import sys
 from GazeDetector import GazeDetector
-from multiprocessing import Process, Queue
 
 
 class Ball(QObject):
@@ -61,17 +60,17 @@ class Example(QGraphicsView):
         self.textbox.setFrameStyle(0)
         self.textbox.show()
 
-        timer = QTimer(self)
-        timer.timeout.connect(self.endPreBallMessage)
-        timer.start(5000)
-        self.timer = timer
+        sample_timer = QTimer(self)
+        sample_timer.timeout.connect(self.endPreBallMessage)
+        sample_timer.start(5000)
+        self.sample_timer = sample_timer
 
     def endPreBallMessage(self):
         self.textbox.deleteLater()
         self.textbox.hide()
         del self.textbox
 
-        self.timer.stop()
+        self.sample_timer.stop()
         self.initBallAnimation()
 
     def initBallAnimation(self):
@@ -102,30 +101,22 @@ class Example(QGraphicsView):
         self.scene.addItem(self.ball.pixmap_item)
         self.setScene(self.scene)
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.sample_start)
-        self.timer.start(5)
+        self.sample_timer = QTimer(self)
+        self.sample_timer.timeout.connect(self.sample_features)
+        self.sample_timer.start(5)
 
-        self.t2 = QTimer(self)
-        self.t2.timeout.connect(self.pull_data)
-        self.t2.start(5)
-
-        self.t3 = QTimer(self)
-        self.t3.timeout.connect(self.endBallAnimation)
-        self.t3.start(10000)
-
-        self.data_queue = Queue()
+        self.end_timer = QTimer(self)
+        self.end_timer.timeout.connect(self.endBallAnimation)
+        self.end_timer.start(10000)
 
         self.anim.start()
 
     def endBallAnimation(self):
         self.scene.removeItem(self.ball.pixmap_item)
-        self.timer.stop()
-        self.timer = None
-        self.t2.stop()
-        del self.t2
-        self.t3.stop()
-        del self.t3
+        self.sample_timer.stop()
+        self.sample_timer = None
+        self.end_timer.stop()
+        del self.end_timer
         self.ball.deleteLater()
         del self.ball
 
@@ -149,9 +140,9 @@ class Example(QGraphicsView):
 
         self.dataSent = False
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.endPostBallMessage)
-        self.timer.start(1000)
+        self.sample_timer = QTimer(self)
+        self.sample_timer.timeout.connect(self.endPostBallMessage)
+        self.sample_timer.start(1000)
 
         self.sendData()
 
@@ -185,24 +176,14 @@ class Example(QGraphicsView):
             else:
                 return 4
 
-    def sample_start(self):
+    def sample_features(self):
         current_pos = self.ball.pixmap_item.scenePos()
-        p = Process(target=self.sample_features, args=(self.gaze, self.data_queue, current_pos))
-        p.start()
-
-    def sample_features(self, detector, queue, pos):
-        x, y = int(pos.x()) + self.ball_width / 2, int(pos.y()) + self.ball_height / 2
-
+        
+        x, y = int(current_pos.x()) + self.ball_width / 2, int(current_pos.y()) + self.ball_height / 2
         x_max, y_max = self.screen_width, self.screen_height
-        features = detector.sample_features()
-        queue.put((features, [x, y, x_max, y_max]))
 
-    def pull_data(self):
-        try:
-            data = self.data_queue.get(timeout=0.01)
-            self.data.append(data)
-        except:
-            pass
+        features = self.gaze.sample_features()
+        self.data.append((features, [x, y, x_max, y_max]))
 
 
 if __name__ == '__main__':
