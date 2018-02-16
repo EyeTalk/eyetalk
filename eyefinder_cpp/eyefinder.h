@@ -84,14 +84,14 @@ private:
   sem_t *sem;
   const char *sem_name = "/capstone";
 
-  long frame_id = 0;
+  double frame_id = 0;
 
   int shmid;
   char *shared_memory;
   const key_t key = 123456;
-  const unsigned int shared_size = sizeof(long) + 30 * sizeof(long);
+  const unsigned int shared_size = sizeof(double) + 30 * sizeof(double);
 
-  // std::vector<long> facial_features_vec;
+  // std::vector<double> facial_features_vec;
   // change to python list later with boost, look below in start()
 
   std::tuple<long, long, long, long>
@@ -101,14 +101,14 @@ private:
 
   void
   preCalculationPoints(const std::vector<dlib::full_object_detection> &shapes,
-                       std::vector<long> &facial_features_vec);
+                       std::vector<double> &facial_features_vec);
   void
   calculateFaceAngles(const std::vector<dlib::full_object_detection> &shapes,
-                      std::vector<long> &facial_features_vec);
-  void calculatePupils(cv::Mat src, std::vector<long> &facial_features_vec);
+                      std::vector<double> &facial_features_vec);
+  void calculatePupils(cv::Mat src, std::vector<double> &facial_features_vec);
   void calculatePupilsEL(const std::vector<dlib::full_object_detection> &shapes,
-                         std::vector<long> &facial_features_vec, cv::Mat temp);
-  void writeFacialFeaturesToShm(const std::vector<long> &facial_features_vec);
+                         std::vector<double> &facial_features_vec, cv::Mat temp);
+  void writeFacialFeaturesToShm(const std::vector<double> &facial_features_vec);
   void writeBadFacialFeaturesToShm(void);
 };
 }; // namespace _EF_

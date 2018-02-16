@@ -88,7 +88,7 @@ class GazeDetector:
         np_data = np.asarray(data)
         categorical_labels = to_categorical(labels)
 
-        self.neural_network.fit(np_data, categorical_labels, num_epochs)
+        self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs)
 
 
 if __name__ == '__main__':
@@ -96,4 +96,4 @@ if __name__ == '__main__':
     sleep(3)
     for i in range(100):
         sleep(0.05)
-        tracker.sample()
+        tracker.sample_features()

@@ -82,16 +82,14 @@ class Example(QGraphicsView):
         anim = QPropertyAnimation(self.ball, b'pos')
         anim.setDuration(10000)
 
-        w = self.screen_width / 4
-        h = self.screen_height / 4
+        w = self.screen_width / 8
+        h = self.screen_height / 8
 
         anim.setStartValue(QPointF(w, h))
 
-        # TODO: do better at this - flush out where we want the ball to go
-
-        anim.setKeyValueAt(0.25, QPointF(3 * w - self.ball_width, h))
-        anim.setKeyValueAt(0.5, QPointF(3 * w - self.ball_width, 3 * h - self.ball_height))
-        anim.setKeyValueAt(0.75, QPointF(w, 3 * h - self.ball_height))
+        anim.setKeyValueAt(0.25, QPointF(7 * w - self.ball_width, h))
+        anim.setKeyValueAt(0.5, QPointF(7 * w - self.ball_width, 7 * h - self.ball_height))
+        anim.setKeyValueAt(0.75, QPointF(w, 7 * h - self.ball_height))
 
         anim.setEndValue(QPointF(w, h))
 
@@ -172,11 +170,20 @@ class Example(QGraphicsView):
     def sendData(self):
         # self.dataSent = True
 
-        client = MongoClient(host=['ds231228.mlab.com'], port=31228, username='JohnH', password='johnhoward')
-        db = client['eyedata-devel']
 
-        data_to_send = [{'x': x, 'y': y} for x, y in self.data]
-        db.test.insert_many(data_to_send)
+        self.showMinimized()
+
+        data, labels = self.format_data_for_machine_learning(self.data)
+
+        self.gaze.train_location_classifier(data, labels, 200)
+
+        # self.dataSent = True
+
+        # client = MongoClient(host=['ds231228.mlab.com'], port=31228, username='JohnH', password='johnhoward')
+        # db = client['eyedata-devel']
+
+        # data_to_send = [{'x': x, 'y': y} for x, y in self.data]
+        # db.test.insert_many(data_to_send)
 
 
     def test_mapping(self, label_data):

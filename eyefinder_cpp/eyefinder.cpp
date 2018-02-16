@@ -99,18 +99,18 @@ int _EF_::EyeFinder::start(void) {
       // guarantee that there are at least
       if (shapes.size()) {
 
-        std::vector<long> facial_features_vec;
+        std::vector<double> facial_features_vec;
 
         // Left eye + Right eye points
         preCalculationPoints(shapes, facial_features_vec);
-
-        // Find the face angle + pupils
-        calculateFaceAngles(shapes, facial_features_vec);
 
         // calculatePupils(roi_l_mat, facial_features_vec);
         // calculatePupils(roi_r_mat, facial_features_vec);
         // Calling EyeLike's now
         calculatePupilsEL(shapes, facial_features_vec, temp);
+
+        // Find the face angle + pupils
+        calculateFaceAngles(shapes, facial_features_vec);
 
         // Write out the Facial Features
         writeFacialFeaturesToShm(facial_features_vec);
@@ -194,7 +194,7 @@ cv::Rect _EF_::EyeFinder::getROI(std::tuple<long, long, long, long> &tp,
 //  12-23 = x, y coordinates of right eye points
 void _EF_::EyeFinder::preCalculationPoints(
     const std::vector<dlib::full_object_detection> &shapes,
-    std::vector<long> &facial_features_vec) {
+    std::vector<double> &facial_features_vec) {
 
   for (int i = 36; i <= 47; ++i) {
     auto shp = shapes[0].part(i);
@@ -207,7 +207,7 @@ void _EF_::EyeFinder::preCalculationPoints(
 // calculateFaceAngles()
 void _EF_::EyeFinder::calculateFaceAngles(
     const std::vector<dlib::full_object_detection> &shapes,
-    std::vector<long> &facial_features_vec) {
+    std::vector<double> &facial_features_vec) {
   auto left_cheek = shapes[0].part(1);
   auto right_cheek = shapes[0].part(16);
   auto nose_center = shapes[0].part(33);
@@ -245,7 +245,7 @@ void _EF_::EyeFinder::calculateFaceAngles(
 // *****
 // calculatePupils() a.k.a. Timm-Barth Algorithm
 void _EF_::EyeFinder::calculatePupils(cv::Mat src,
-                                      std::vector<long> &facial_features_vec) {
+                                      std::vector<double> &facial_features_vec) {
 
   cv::Mat src_blur, src_blur_inv;
   int scale = 1;
@@ -306,15 +306,15 @@ void _EF_::EyeFinder::calculatePupils(cv::Mat src,
     }
   }
 
-  facial_features_vec.push_back((long)max_r);
-  facial_features_vec.push_back((long)max_c);
+  facial_features_vec.push_back((double)max_r);
+  facial_features_vec.push_back((double)max_c);
 }
 
 // *****
 // calculatePupilsEL() a.k.a. Timm-Barth Algorithm using EyeLike
 void _EF_::EyeFinder::calculatePupilsEL(
     const std::vector<dlib::full_object_detection> &shapes,
-    std::vector<long> &facial_features_vec, cv::Mat temp) {
+    std::vector<double> &facial_features_vec, cv::Mat temp) {
 
   // left eye + right eye
   std::tuple<long, long, long, long> l_tp =
@@ -346,10 +346,10 @@ void _EF_::EyeFinder::calculatePupilsEL(
   int real_rightPupil_x = rightPupil.x + roi_r.x;
   int real_rightPupil_y = rightPupil.y + roi_r.y;
 
-  facial_features_vec.push_back((long)real_leftPupil_x);
-  facial_features_vec.push_back((long)real_leftPupil_y);
-  facial_features_vec.push_back((long)real_rightPupil_x);
-  facial_features_vec.push_back((long)real_rightPupil_y);
+  facial_features_vec.push_back((double)real_leftPupil_x);
+  facial_features_vec.push_back((double)real_leftPupil_y);
+  facial_features_vec.push_back((double)real_rightPupil_x);
+  facial_features_vec.push_back((double)real_rightPupil_y);
 
 #if EF_DEBUG_TB
   cv::circle(temp, cv::Point(real_leftPupil_x, real_leftPupil_y), 1,
@@ -371,17 +371,17 @@ void _EF_::EyeFinder::calculatePupilsEL(
 //  26, 27 = x, y coordinates of right eye center (timm)
 //  28-29 = face angles (another code)
 void _EF_::EyeFinder::writeFacialFeaturesToShm(
-    const std::vector<long> &facial_features_vec) {
+    const std::vector<double> &facial_features_vec) {
   int i = 0;
   sem_wait(sem);
 
   // add an ID to the frame first
-  memcpy(shared_memory + sizeof(long) * i, &frame_id, sizeof(long));
+  memcpy(shared_memory + sizeof(double) * i, &frame_id, sizeof(double));
   i = 1;
 
   // now copy every value in vec over
   for (const auto num : facial_features_vec) {
-    memcpy(shared_memory + sizeof(long) * i, &num, sizeof(long));
+    memcpy(shared_memory + sizeof(double) * i, &num, sizeof(double));
     i++;
   }
 
@@ -389,7 +389,7 @@ void _EF_::EyeFinder::writeFacialFeaturesToShm(
   // floats
 
   sem_post(sem);
-  frame_id = (frame_id + 1) % 100;
+  frame_id = ((int)frame_id + 1) % 100;
 }
 
 void _EF_::EyeFinder::writeBadFacialFeaturesToShm(void) {}

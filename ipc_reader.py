@@ -1,11 +1,12 @@
 import sysv_ipc
 import posix_ipc
 import ctypes
+import struct
 
 
 class IPCReader:
     elements_in_vector = 31
-    sizeoflong = ctypes.sizeof(ctypes.c_long)
+    sizeofdouble = ctypes.sizeof(ctypes.c_double)
 
     def __enter__(self):
         # Connect to existing shared memory
@@ -14,10 +15,8 @@ class IPCReader:
         self.sem = posix_ipc.Semaphore("/capstone")
         return self
 
-    # TODO: interpret face angles as floats instead of longs
-
-    def bytes_to_longs(self, bstr):
-        tmp = [int.from_bytes(bstr[i * self.sizeoflong:(i + 1) * self.sizeoflong], byteorder='little')
+    def bytes_to_floats(self, bstr):
+        tmp = [struct.unpack('<d', bstr[i * self.sizeofdouble:(i + 1) * self.sizeofdouble])[0]
                for i in range(self.elements_in_vector)]
         return tmp
 
@@ -25,7 +24,7 @@ class IPCReader:
         self.sem.acquire()
         memory_value = self.memory.read()
         self.sem.release()
-        facial_features_list = self.bytes_to_longs(memory_value)
+        facial_features_list = self.bytes_to_floats(memory_value)
         return facial_features_list
 
     def clean(self):
