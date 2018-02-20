@@ -185,12 +185,14 @@ class Example(QGraphicsView):
 
         # self.dataSent = True
 
-        # client = MongoClient(host=['ds231228.mlab.com'], port=31228, username='JohnH', password='johnhoward')
-        # db = client['eyedata-devel']
+        client = MongoClient()
+        client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
+        db = client['eyedata-devel']
+        collection = db.Test
 
-        # data_to_send = [{'x': x, 'y': y} for x, y in self.data]
-        # db.test.insert_many(data_to_send)
-
+        data_to_send = [{'x': x, 'y': y} for x, y in self.data]
+        insertTest = db.Test.insert_many(data_to_send)
+        insertTest.inserted_ids
 
     def test_mapping(self, label_data):
         x, y, width, height = label_data
