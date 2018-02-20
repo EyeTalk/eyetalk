@@ -170,12 +170,18 @@ class Example(QGraphicsView):
     def sendData(self):
         # self.dataSent = True
 
-
         self.showMinimized()
 
         data, labels = self.format_data_for_machine_learning(self.data)
 
-        self.gaze.train_location_classifier(data, labels, 200)
+        self.gaze.train_location_classifier(data, labels, 20000)
+
+        test_data = data[200]
+        test_label = labels[200]
+
+        new_label = self.gaze.calculate_location_probabilities_from_features(test_data)
+
+        print(test_label, new_label)
 
         # self.dataSent = True
 

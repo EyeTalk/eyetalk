@@ -27,6 +27,8 @@ class GazeDetector:
         self.neural_network = None
         self.init_model()
 
+        self.last_id_seen = -1
+
     def init_model(self):
         model = Sequential()
         model.add(Dense(20, input_shape=(30,), kernel_initializer='uniform', activation='sigmoid'))
@@ -46,8 +48,14 @@ class GazeDetector:
         features = self.sample_features()
 
         # print(features)
+        feature_id = features[0]
 
-        probabilities = self.calculate_location_probabilities_from_features(features)
+        while feature_id == self.last_id_seen:
+            features = self.sample_features()
+
+        self.last_id_seen = feature_id
+
+        probabilities = self.calculate_location_probabilities_from_features(features[1:])
 
         return probabilities
 
@@ -75,6 +83,8 @@ class GazeDetector:
         :return: a ndarray of probabilities for each label in the UI
         """
 
+        features = np.asarray([features, ])
+
         prediction_vals = self.neural_network.predict(features)
         return prediction_vals
 
@@ -93,7 +103,7 @@ class GazeDetector:
 
 if __name__ == '__main__':
     tracker = GazeDetector()
-    sleep(3)
+    sleep(1)
     for i in range(100):
         sleep(0.05)
-        tracker.sample_features()
+        tracker.sample()
