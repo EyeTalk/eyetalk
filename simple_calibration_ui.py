@@ -63,7 +63,7 @@ class Example(QGraphicsView):
 
         sample_timer = QTimer(self)
         sample_timer.timeout.connect(self.endPreBallMessage)
-        sample_timer.start(5000)
+        sample_timer.start(2000)
         self.sample_timer = sample_timer
 
     def endPreBallMessage(self):
@@ -79,26 +79,24 @@ class Example(QGraphicsView):
         self.ball_width = self.ball.pixmap_item.boundingRect().size().width()
         self.ball_height = self.ball.pixmap_item.boundingRect().size().height()
 
-        anim = QPropertyAnimation(self.ball, b'pos')
-        anim.setDuration(10000)
+        self.pos = 0
+        self.button_positions = [
+            QPointF(100.0, 400.0),
+            QPointF(400.0, 400.0),
+            QPointF(400.0, 100.0),
+            QPointF(100.0, 100.0)
+        ]
 
-        w = self.screen_width / 8
-        h = self.screen_height / 8
-
-        anim.setStartValue(QPointF(w, h))
-
-        anim.setKeyValueAt(0.25, QPointF(7 * w - self.ball_width, h))
-        anim.setKeyValueAt(0.5, QPointF(7 * w - self.ball_width, 7 * h - self.ball_height))
-        anim.setKeyValueAt(0.75, QPointF(w, 7 * h - self.ball_height))
-
-        anim.setEndValue(QPointF(w, h))
-
-        self.anim = anim
+        self.ball.pixmap_item.setPos(self.button_positions[0])
 
         self.scene = QGraphicsScene(self)
         self.scene.setSceneRect(0, 0, self.screen_width, self.screen_height)
         self.scene.addItem(self.ball.pixmap_item)
         self.setScene(self.scene)
+
+        self.position_timer = QTimer()
+        self.position_timer.timeout.connect(self.move_ball)
+        self.position_timer.start(1250)
 
         self.sample_timer = QTimer(self)
         self.sample_timer.timeout.connect(self.sample_features)
@@ -108,7 +106,11 @@ class Example(QGraphicsView):
         self.end_timer.timeout.connect(self.endBallAnimation)
         self.end_timer.start(10000)
 
-        self.anim.start()
+
+    def move_ball(self):
+        next_position = (self.pos + 1) % len(self.button_positions)
+        self.ball.pixmap_item.setPos(self.button_positions[next_position])
+        self.pos += 1
 
     def endBallAnimation(self):
         self.scene.removeItem(self.ball.pixmap_item)
@@ -137,13 +139,13 @@ class Example(QGraphicsView):
         self.textbox.setHtml(text)
         self.textbox.show()
 
-        self.dataSent = False
+        self.dataSent = True
 
         self.sample_timer = QTimer(self)
         self.sample_timer.timeout.connect(self.endPostBallMessage)
         self.sample_timer.start(1000)
-
-        self.sendData()
+        #
+        # self.sendData()
 
     def endPostBallMessage(self):
         if self.dataSent:
