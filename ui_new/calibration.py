@@ -5,6 +5,7 @@ from PyQt5.QtCore import (QObject, QPointF, QTimer,
         QPropertyAnimation, pyqtProperty, Qt)
 import sys
 from multiprocessing import Process, Queue
+from ui_layout import build_layout_dictionary
 
 
 class Ball(QObject):
@@ -74,39 +75,48 @@ class Calibration(QGraphicsView):
         self.ball_width = self.ball.pixmap_item.boundingRect().size().width()
         self.ball_height = self.ball.pixmap_item.boundingRect().size().height()
 
-        anim = QPropertyAnimation(self.ball, b'pos')
-        anim.setDuration(10000)
-        anim.setStartValue(QPointF(0, 0))
+        sg = QDesktopWidget().screenGeometry()
+        layout = build_layout_dictionary(sg.width(), sg.height())
+        elements = layout['elements']
 
-        # TODO: do better at this - flush out where we want the ball to go
+        self.pos = 0
+        self.button_positions = [QPointF(elem['top_left_x'] + elem['width'] / 2 - self.ball_width / 2,
+                                         elem['top_left_y'] + elem['height'] / 2 - self.ball_height / 2)
+                                 for _, elem in elements.items()]
 
-        anim.setKeyValueAt(0.25, QPointF(self.screen_width - self.ball_width, 0))
-        anim.setKeyValueAt(0.5, QPointF(self.screen_width - self.ball_width, self.screen_height - self.ball_height))
-        anim.setKeyValueAt(0.75, QPointF(0, self.screen_height - self.ball_height))
-
-        anim.setEndValue(QPointF(0, 0))
-
-        self.anim = anim
+        self.ball.pixmap_item.setPos(self.button_positions[0])
 
         self.scene = QGraphicsScene(self)
         self.scene.setSceneRect(0, 0, self.screen_width, self.screen_height)
         self.scene.addItem(self.ball.pixmap_item)
         self.setScene(self.scene)
 
-        self.t3 = QTimer(self)
-        self.t3.timeout.connect(self.endBallAnimation)
-        self.t3.start(10000)
+        self.position_timer = QTimer()
+        self.position_timer.timeout.connect(self.move_ball)
+        self.position_timer.start(1250)
 
-        self.data_queue = Queue()
+        # self.sample_timer = QTimer(self)
+        # self.sample_timer.timeout.connect(self.sample_features)
+        # self.sample_timer.start(5)
 
-        self.anim.start()
+        self.end_timer = QTimer(self)
+        self.end_timer.timeout.connect(self.endBallAnimation)
+        self.end_timer.start(1250 * len(self.button_positions) * 2)
+
+
+    def move_ball(self):
+        next_position = (self.pos + 1) % len(self.button_positions)
+        self.ball.pixmap_item.setPos(self.button_positions[next_position])
+        self.pos += 1
 
     def endBallAnimation(self):
         self.scene.removeItem(self.ball.pixmap_item)
-        self.timer.stop()
-        self.timer = None
-        self.t3.stop()
-        del self.t3
+        # self.sample_timer.stop()
+        # self.sample_timer = None
+        self.end_timer.stop()
+        del self.end_timer
+        self.position_timer.stop()
+        del self.position_timer
         self.ball.deleteLater()
         del self.ball
 
@@ -145,7 +155,6 @@ class Calibration(QGraphicsView):
         self.dataSent = True
 
         # TODO: Implement data send to database
-
 
     def sample_features(self, detector, queue, pos):
         x, y = int(pos.x()) + self.ball_width / 2, int(pos.y()) + self.ball_height / 2

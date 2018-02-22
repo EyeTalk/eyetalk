@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import (QApplication, QGraphicsView,
         QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
 from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5.QtCore import (QObject, QPointF, QTimer,
-        QPropertyAnimation, pyqtProperty, Qt)
+from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 import sys
 from GazeDetector import GazeDetector
 from pymongo import MongoClient
+from ui_new.ui_layout import build_layout_dictionary
 
 
 class Ball(QObject):
@@ -79,13 +79,14 @@ class Example(QGraphicsView):
         self.ball_width = self.ball.pixmap_item.boundingRect().size().width()
         self.ball_height = self.ball.pixmap_item.boundingRect().size().height()
 
+        sg = QDesktopWidget().screenGeometry()
+        layout = build_layout_dictionary(sg.width(), sg.height())
+        elements = layout['elements']
+
         self.pos = 0
-        self.button_positions = [
-            QPointF(100.0, 400.0),
-            QPointF(400.0, 400.0),
-            QPointF(400.0, 100.0),
-            QPointF(100.0, 100.0)
-        ]
+        self.button_positions = [QPointF(elem['top_left_x'] + elem['width'] / 2 - self.ball_width / 2,
+                                         elem['top_left_y'] + elem['height'] / 2 - self.ball_height / 2)
+                                 for _, elem in elements.items()]
 
         self.ball.pixmap_item.setPos(self.button_positions[0])
 
@@ -104,7 +105,7 @@ class Example(QGraphicsView):
 
         self.end_timer = QTimer(self)
         self.end_timer.timeout.connect(self.endBallAnimation)
-        self.end_timer.start(10000)
+        self.end_timer.start(1250 * len(self.button_positions) * 2)
 
 
     def move_ball(self):
@@ -118,6 +119,8 @@ class Example(QGraphicsView):
         self.sample_timer = None
         self.end_timer.stop()
         del self.end_timer
+        self.position_timer.stop()
+        del self.position_timer
         self.ball.deleteLater()
         del self.ball
 
