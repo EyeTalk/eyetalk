@@ -1,13 +1,14 @@
-import os
 import atexit
-import numpy as np
+import os
 import subprocess as sp
+import numpy as np
 from time import sleep
-from ipc_reader import IPCReader
-from keras.models import Sequential
 from keras.layers import Dense
+from keras.models import Sequential
 from keras.optimizers import SGD
 from keras.utils.np_utils import to_categorical
+
+from backend.ipc_reader import IPCReader
 
 
 class GazeDetector:
@@ -17,7 +18,7 @@ class GazeDetector:
     def __init__(self, external_camera=False):
 
         # TODO: parameterize so that we can pass in the camera number
-        self.cpp_proc = sp.Popen(['{prefix}/eyefinder_cpp/build/eyefinder'.format(prefix=os.getcwd())])
+        self.cpp_proc = sp.Popen(['{prefix}/backend/eyefinder_cpp/build/eyefinder'.format(prefix=os.getcwd())])
 
         # clean up IPC at end
         atexit.register(self.cleanup)

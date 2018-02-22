@@ -1,11 +1,13 @@
-from PyQt5.QtWidgets import (QApplication, QGraphicsView,
-        QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
-from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 import sys
-from GazeDetector import GazeDetector
+
+from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
+from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5.QtWidgets import (QApplication, QGraphicsView,
+                             QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
 from pymongo import MongoClient
-from ui_new.ui_layout import build_layout_dictionary
+
+from backend.GazeDetector import GazeDetector
+from ui.ui_layout import build_layout_dictionary
 
 
 class Ball(QObject):

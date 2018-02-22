@@ -1,18 +1,15 @@
-from PyQt5.QtWidgets import (QApplication, QGraphicsView,
+from PyQt5.QtWidgets import (QGraphicsView,
         QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
 from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5.QtCore import (QObject, QPointF, QTimer,
-        QPropertyAnimation, pyqtProperty, Qt)
-import sys
-from multiprocessing import Process, Queue
-from ui_layout import build_layout_dictionary
+from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
+from ui.ui_layout import build_layout_dictionary
 
 
 class Ball(QObject):
     def __init__(self):
         super().__init__()
 
-        self.pixmap_item = QGraphicsPixmapItem(QPixmap("red_ball.png"))
+        self.pixmap_item = QGraphicsPixmapItem(QPixmap("ui/red_ball.png"))
 
     def _set_pos(self, pos):
         self.pixmap_item.setPos(pos)
@@ -167,10 +164,3 @@ class Calibration(QGraphicsView):
         x_max, y_max = self.screen_width, self.screen_height
         features = detector.sample_features_mock()
         queue.put((features, [x, y, x_max, y_max]))
-
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = Calibration()
-    sys.exit(app.exec_())

@@ -1,7 +1,7 @@
-from base_8_button import BaseEightButton
+from ui.base_8_button import BaseEightButton
 
 
-class EightBtnMain(BaseEightButton):
+class EightButtonMainMenu(BaseEightButton):
     def __init__(self, parent):
         BaseEightButton.__init__(self, parent)
         self.base_string = "Please select an option"

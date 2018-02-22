@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDesktopWidget, QMainWindow, QWidget
 from PyQt5.QtCore import QMetaObject
 
-from ui_layout import build_layout_dictionary, build_layout_element
+from ui.ui_layout import build_layout_dictionary, build_layout_element
 
 
 class BaseEightButton(QWidget):
@@ -33,7 +33,6 @@ class BaseEightButton(QWidget):
         self.setWindowTitle("EyeTalk")
 
         sg = QDesktopWidget().screenGeometry()
-        self.resize(sg.width(), sg.height())
 
         layout_dict = build_layout_dictionary(sg.width(), sg.height())
 

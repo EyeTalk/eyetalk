@@ -7,5 +7,5 @@ else
 fi
 
 if [ "$1" == "run" ]; then
-  ./build/eyefinder
+  build/eyefinder
 fi

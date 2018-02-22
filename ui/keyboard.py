@@ -1,8 +1,8 @@
-from base_8_button import BaseEightButton
-from keyboard_constants import *
+from ui.base_8_button import BaseEightButton
+from ui.keyboard_constants import *
 
 
-class EightBtnKeyboardMain(BaseEightButton):
+class EightButtonKeyboard(BaseEightButton):
 
     def __init__(self, parent):
         BaseEightButton.__init__(self, parent)
@@ -61,6 +61,14 @@ class EightBtnKeyboardMain(BaseEightButton):
         self.browser_text += text_char
         self.set_text_browser(self.browser_text)
 
+    def delete_last_char(self):
+        self.browser_text = self.browser_text[:-1]
+        self.set_text_browser(self.browser_text)
+
+    def clear_all(self):
+        self.browser_text = ''
+        self.set_text_browser(self.browser_text)
+
     def push_button_1_onclick(self):
         if self.current_keyboard_screen == 0:
             self.load_keyboard_screen(1)
@@ -113,6 +121,24 @@ class EightBtnKeyboardMain(BaseEightButton):
     def push_button_8_onclick(self):
         if self.current_keyboard_screen == 0:
             self.load_keyboard_screen(4)
+        elif self.current_keyboard_screen == 1:
+            self.add_character(' ')
+            self.load_keyboard_screen(0)
+        elif self.current_keyboard_screen == 2:
+            self.delete_last_char()
+            self.load_keyboard_screen(0)
         else:
             self.add_character(self.text_8)
+            self.load_keyboard_screen(0)
+
+    def top_left_button_onclick(self):
+        if self.current_keyboard_screen == 0:
+            if self.browser_text:
+                self.clear_all()
+                self.load_keyboard_screen(0)
+                # self.topLeftButton.setText('Main Menu')
+            else:
+                self.clear_all()
+                self.goBack()
+        else:
             self.load_keyboard_screen(0)
