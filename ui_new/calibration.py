@@ -142,14 +142,19 @@ class Calibration(QGraphicsView):
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.endPostBallMessage)
-        self.timer.start(1000)
+        self.timer.start(3000)
 
         self.sendData()
 
     def endPostBallMessage(self):
+
         if self.dataSent:
             self.close()
             self.parent.stacked_widget.setCurrentIndex(1)
+            self.timer.stop()
+
+            self.timer.deleteLater()
+            del self.timer
 
     def sendData(self):
         self.dataSent = True

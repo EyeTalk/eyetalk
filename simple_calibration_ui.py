@@ -151,6 +151,7 @@ class Example(QGraphicsView):
         # self.sendData()
 
     def endPostBallMessage(self):
+
         if self.dataSent:
             app.quit()
 

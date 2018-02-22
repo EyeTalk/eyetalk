@@ -1,12 +1,11 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QFrame, QPushButton, QDesktopWidget, QStackedWidget
-from PyQt5.QtCore import pyqtSlot, QPointF, QRect, Qt
-from keyboard_ui import Keyboard_UI
+from PyQt5.QtCore import pyqtSlot, QPointF, QRect, Qt, QTimer
 from calibration import Calibration
 from main_8btn import EightBtnMain
 from keyboard_main_8btn import EightBtnKeyboardMain
-from add_char_8btn import EightBtnAddChar
+
 
 class Top(QtWidgets.QMainWindow):
     def __init__(self):
@@ -20,13 +19,8 @@ class Top(QtWidgets.QMainWindow):
 
         self.stacked_widget.addWidget(Calibration(self))
         self.stacked_widget.addWidget(EightBtnMain(self))
-        keyMain = EightBtnKeyboardMain(self)
-        self.stacked_widget.addWidget(keyMain)
-        self.stacked_widget.addWidget(EightBtnAddChar(self,keyMain,["0","1","2","3","4","5","6","7"]))
-        self.stacked_widget.addWidget(EightBtnAddChar(self,keyMain,["A","B","C","D","E","F","G"," "]))
-        self.stacked_widget.addWidget(EightBtnAddChar(self,keyMain,["H","I","J","K","L","M","N","Backspace"]))
-        self.stacked_widget.addWidget(EightBtnAddChar(self,keyMain,["O","P","Q","R","S","T","U","Caps"]))
-        self.stacked_widget.addWidget(EightBtnAddChar(self,keyMain,["V","W","X","Y","Z",".","?","!"]))
+        self.stacked_widget.addWidget(EightBtnKeyboardMain(self))
+        self.stacked_widget.setCurrentIndex(1)
 
         
 if __name__ == '__main__':

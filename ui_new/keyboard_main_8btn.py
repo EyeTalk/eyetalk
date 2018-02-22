@@ -1,16 +1,29 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import (QApplication, QWidget, QFrame, QPushButton,
-QDesktopWidget, QStackedWidget)
-from PyQt5.QtCore import pyqtSlot, QPointF, QRect, Qt
-from add_char_8btn import EightBtnAddChar
-from ui_layout import build_layout_dictionary, build_layout_element
+from base_8_button import BaseEightButton
+from keyboard_constants import *
 
 
-class EightBtnKeyboardMain(QtWidgets.QWidget):
+class EightBtnKeyboardMain(BaseEightButton):
+
     def __init__(self, parent):
-        QtWidgets.QMainWindow.__init__(self)
-        self.parent = parent
-        self.setupUi()
+        BaseEightButton.__init__(self, parent)
+
+        self.browser_text = ''
+
+        self.text_1 = ''
+        self.text_2 = ''
+        self.text_3 = ''
+        self.text_4 = ''
+        self.text_5 = ''
+        self.text_6 = ''
+        self.text_7 = ''
+        self.text_8 = ''
+
+        self.topLeftButton.setText(EXIT)
+        self.topRightButton.setText(CONFIRM)
+
+        self.current_keyboard_screen = 0
+
+        self.load_keyboard_screen(0)
 
     def goBack(self):
         self.parent.stacked_widget.setCurrentIndex(1)
@@ -21,63 +34,85 @@ class EightBtnKeyboardMain(QtWidgets.QWidget):
         print(self.parent.stacked_widget.widget(num))
         self.parent.stacked_widget.setCurrentIndex(num)
 
-    def setupUi(self):
-        sg = QDesktopWidget().screenGeometry()
-        self.screen = QPointF(sg.width(), sg.height())
-        self.resize(self.screen.x(), self.screen.y())
+    def load_keyboard_screen(self, keyboard_index):
+        layout = TEXT_LAYOUTS[keyboard_index]
 
-         # Calculate borders and button sizes based on screen size
-        border = self.screen * 0.05
-        btnSizeCir = QPointF(self.screen.x() * 0.1875, self.screen.x() * 0.1875)
-        btnSizeCor = self.screen * 0.2
+        self.text_1 = layout[0]
+        self.text_2 = layout[1]
+        self.text_3 = layout[2]
+        self.text_4 = layout[3]
+        self.text_5 = layout[4]
+        self.text_6 = layout[5]
+        self.text_7 = layout[6]
+        self.text_8 = layout[7]
 
-        self.userStr = ""
+        self.pushButton_1.setText(self.text_1)
+        self.pushButton_2.setText(self.text_2)
+        self.pushButton_3.setText(self.text_3)
+        self.pushButton_4.setText(self.text_4)
+        self.pushButton_5.setText(self.text_5)
+        self.pushButton_6.setText(self.text_6)
+        self.pushButton_7.setText(self.text_7)
+        self.pushButton_8.setText(self.text_8)
 
-        layout_dict = build_layout_dictionary(sg.width(), sg.height())
+        self.current_keyboard_screen = keyboard_index
 
-        # Create and place objects
-        self.pushButton = build_layout_element(self, layout_dict, 'pushButton_1')
-        self.pushButton_2 = build_layout_element(self, layout_dict, 'pushButton_2')
-        self.pushButton_3 = build_layout_element(self, layout_dict, 'pushButton_3')
-        self.pushButton_4 = build_layout_element(self, layout_dict, 'pushButton_4')
-        self.pushButton_5 = build_layout_element(self, layout_dict, 'pushButton_5')
-        self.pushButton_6 = build_layout_element(self, layout_dict, 'pushButton_6')
-        self.pushButton_7 = build_layout_element(self, layout_dict, 'pushButton_7')
-        self.pushButton_8 = build_layout_element(self, layout_dict, 'pushButton_8')
-        self.topLeftButton = build_layout_element(self, layout_dict, 'topLeftButton')
-        self.topRightButton = build_layout_element(self, layout_dict, 'topRightButton')
-        self.textBrowser = build_layout_element(self, layout_dict, 'textBrowser')
+    def add_character(self, text_char):
+        self.browser_text += text_char
+        self.set_text_browser(self.browser_text)
 
-        self.pushButton_4.clicked.connect(lambda: self.openWindow(3))
-        self.pushButton_5.clicked.connect(lambda: self.openWindow(4))
-        self.pushButton_6.clicked.connect(lambda: self.openWindow(5))
-        self.pushButton_7.clicked.connect(lambda: self.openWindow(6))
-        self.pushButton_8.clicked.connect(lambda: self.openWindow(7))
-        
+    def push_button_1_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(1)
+        else:
+            self.add_character(self.text_1)
+            self.load_keyboard_screen(0)
 
-        self.textBrowser.setText(self.userStr)
+    def push_button_2_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(1)
+        else:
+            self.add_character(self.text_2)
+            self.load_keyboard_screen(0)
 
-        self.topLeftButton.clicked.connect(self.goBack)
+    def push_button_3_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(1)
+        else:
+            self.add_character(self.text_3)
+            self.load_keyboard_screen(0)
 
-        QtCore.QMetaObject.connectSlotsByName(self)
+    def push_button_4_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(1)
+        else:
+            self.add_character(self.text_4)
+            self.load_keyboard_screen(0)
 
-        self.setWindowTitle("EyeTalk")
-        self.pushButton.setText("PredictedWord1")
-        self.pushButton_2.setText("PredictedWord2")
-        self.pushButton_3.setText("PredictedWord3")
-        self.pushButton_4.setText("Numbers or Symbols")
-        self.pushButton_5.setText("A B C D E F G\nSpace")
-        self.pushButton_6.setText("H I J K L M N\nBackspace")
-        self.pushButton_7.setText("O P Q R S T U\nCaps")
-        self.pushButton_8.setText("V W X Y Z\n. ? !")
-        self.topLeftButton.setText("Exit")
-        self.topRightButton.setText("Confirm")
+    def push_button_5_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(1)
+        else:
+            self.add_character(self.text_5)
+            self.load_keyboard_screen(0)
 
+    def push_button_6_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(2)
+        else:
+            self.add_character(self.text_6)
+            self.load_keyboard_screen(0)
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    parent = QWidget()
-    w = EightBtnKeyboardMain(parent)
-    w.show()
-    sys.exit(app.exec_())
+    def push_button_7_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(3)
+        else:
+            self.add_character(self.text_7)
+            self.load_keyboard_screen(0)
+
+    def push_button_8_onclick(self):
+        if self.current_keyboard_screen == 0:
+            self.load_keyboard_screen(4)
+        else:
+            self.add_character(self.text_8)
+            self.load_keyboard_screen(0)

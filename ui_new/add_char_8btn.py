@@ -11,13 +11,13 @@ class EightBtnAddChar(QWidget):
         self.setupUi()
         
     def goBack(self):
-        self.parent.stacked_widget.setCurrentIndex(0)
+        self.parent.stacked_widget.setCurrentIndex(2)
         self.hide()
 
     def addChar(self, char):
         new_str = self.keyMain.textBrowser.toPlainText() + char
         self.keyMain.textBrowser.setText(new_str)
-        self.parent.stacked_widget.setCurrentIndex(0)
+        self.parent.stacked_widget.setCurrentIndex(2)
         self.hide()
         
     def setupUi(self):
