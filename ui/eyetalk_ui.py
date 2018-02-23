@@ -6,7 +6,7 @@ from ui.calibration import Calibration
 from ui.main_menu import EightButtonMainMenu
 from ui.keyboard import EightButtonKeyboard
 
-#from backend.GazeDetector import GazeDetector
+from backend.GazeDetector import GazeDetector
 
 
 class MainUIWindow(QtWidgets.QMainWindow):
@@ -14,7 +14,7 @@ class MainUIWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         sg = QDesktopWidget().screenGeometry()
 
-        #self.detector = GazeDetector()
+        self.detector = GazeDetector()
 
         self.screen = QPointF(sg.width(), sg.height())
         self.showFullScreen()
@@ -22,8 +22,7 @@ class MainUIWindow(QtWidgets.QMainWindow):
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
 
-        #self.stacked_widget.addWidget(Calibration(self, self.detector))
-        self.stacked_widget.addWidget(QtWidgets.QWidget())
+        self.stacked_widget.addWidget(Calibration(self, self.detector))
         self.stacked_widget.addWidget(EightButtonMainMenu(self))
         self.stacked_widget.addWidget(EightButtonKeyboard(self))
         self.stacked_widget.setCurrentIndex(1)
