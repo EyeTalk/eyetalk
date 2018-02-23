@@ -18,7 +18,7 @@ class EightButtonKeyboard(BaseEightButton):
         self.text_7 = ''
         self.text_8 = ''
 
-        self.topLeftButton.setText(EXIT)
+        self.topLeftButton.setText(MAINMENU)
         self.topRightButton.setText(CONFIRM)
 
         self.current_keyboard_screen = 0
@@ -60,10 +60,14 @@ class EightButtonKeyboard(BaseEightButton):
     def add_character(self, text_char):
         self.browser_text += text_char
         self.set_text_browser(self.browser_text)
+        self.topLeftButton.setText(CLEAR)
 
     def delete_last_char(self):
         self.browser_text = self.browser_text[:-1]
         self.set_text_browser(self.browser_text)
+        if (self.browser_text == ""):
+            self.topLeftButton.setText(MAINMENU)
+
 
     def clear_all(self):
         self.browser_text = ''
@@ -136,7 +140,7 @@ class EightButtonKeyboard(BaseEightButton):
             if self.browser_text:
                 self.clear_all()
                 self.load_keyboard_screen(0)
-                # self.topLeftButton.setText('Main Menu')
+                self.topLeftButton.setText(MAINMENU)
             else:
                 self.clear_all()
                 self.goBack()
