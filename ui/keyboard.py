@@ -1,6 +1,6 @@
 from ui.base_8_button import BaseEightButton
 from ui.keyboard_constants import *
-
+from ui.word_recommendations.recommendations import RecommendationSystem
 
 class EightButtonKeyboard(BaseEightButton):
 
@@ -21,6 +21,8 @@ class EightButtonKeyboard(BaseEightButton):
         self.topLeftButton.setText(MAINMENU)
         self.topRightButton.setText(CONFIRM)
 
+        self.rec = RecommendationSystem()
+
         self.current_keyboard_screen = 0
 
         self.load_keyboard_screen(0)
@@ -31,7 +33,6 @@ class EightButtonKeyboard(BaseEightButton):
 
     def openWindow(self, num):
         self.hide()
-        print(self.parent.stacked_widget.widget(num))
         self.parent.stacked_widget.setCurrentIndex(num)
 
     def load_keyboard_screen(self, keyboard_index):
@@ -46,6 +47,15 @@ class EightButtonKeyboard(BaseEightButton):
         self.text_7 = layout[6]
         self.text_8 = layout[7]
 
+        if keyboard_index == 0:
+            wordList = self.rec.get_recommendation(self.label_text)
+            if len(wordList) > 0:
+                self.text_1 = wordList[0]
+            if len(wordList) > 1:
+                self.text_2 = wordList[1]
+            if len(wordList) > 2:
+                self.text_3 = wordList[2]
+
         self.pushButton_1.setText(self.text_1)
         self.pushButton_2.setText(self.text_2)
         self.pushButton_3.setText(self.text_3)
@@ -54,6 +64,9 @@ class EightButtonKeyboard(BaseEightButton):
         self.pushButton_6.setText(self.text_6)
         self.pushButton_7.setText(self.text_7)
         self.pushButton_8.setText(self.text_8)
+
+        if keyboard_index > 0:
+            self.topLeftButton.setText(BACK)
 
         self.current_keyboard_screen = keyboard_index
 
@@ -68,6 +81,16 @@ class EightButtonKeyboard(BaseEightButton):
         if (self.label_text == ""):
             self.topLeftButton.setText(MAINMENU)
 
+    def add_predicted(self, text_word):
+        space_index = self.label_text.rfind(' ')
+        if space_index > 0:
+            self.label_text = self.label_text[:space_index+1-len(self.label_text)]
+            self.label_text += text_word
+            self.set_text_label(self.label_text)
+        else:
+            self.label_text = text_word
+            self.set_text_label(text_word)
+            self.topLeftButton.setText(CLEAR)
 
     def clear_all(self):
         self.label_text = ''
@@ -75,21 +98,24 @@ class EightButtonKeyboard(BaseEightButton):
 
     def push_button_1_onclick(self):
         if self.current_keyboard_screen == 0:
-            self.load_keyboard_screen(1)
+            self.add_predicted(self.text_1 + ' ')
+            self.load_keyboard_screen(0)
         else:
             self.add_character(self.text_1)
             self.load_keyboard_screen(0)
 
     def push_button_2_onclick(self):
         if self.current_keyboard_screen == 0:
-            self.load_keyboard_screen(1)
+            self.add_predicted(self.text_2 + ' ')
+            self.load_keyboard_screen(0)
         else:
             self.add_character(self.text_2)
             self.load_keyboard_screen(0)
 
     def push_button_3_onclick(self):
         if self.current_keyboard_screen == 0:
-            self.load_keyboard_screen(1)
+            self.add_predicted(self.text_3 + ' ')
+            self.load_keyboard_screen(0)
         else:
             self.add_character(self.text_3)
             self.load_keyboard_screen(0)
@@ -145,4 +171,5 @@ class EightButtonKeyboard(BaseEightButton):
                 self.clear_all()
                 self.goBack()
         else:
+            self.topLeftButton.setText(MAINMENU)
             self.load_keyboard_screen(0)
