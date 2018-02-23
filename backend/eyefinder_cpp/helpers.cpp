@@ -15,8 +15,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <queue>
 #include <stdio.h>
 
-#include "constants.h"
-
 bool rectInImage(cv::Rect rect, cv::Mat image) {
   return rect.x > 0 && rect.y > 0 && rect.x+rect.width < image.cols &&
   rect.y+rect.height < image.rows;

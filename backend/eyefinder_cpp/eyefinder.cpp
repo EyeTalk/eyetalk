@@ -76,6 +76,12 @@ int _EF_::EyeFinder::start(void) {
 #else
     while (true) {
 #endif
+#if EF_DEBUG_PUPIL
+      cv::namedWindow("PupilL", cv::WINDOW_AUTOSIZE);
+      cv::namedWindow("PupilR", cv::WINDOW_AUTOSIZE);
+      cv::namedWindow("PupilL_ACC", cv::WINDOW_AUTOSIZE);
+      cv::namedWindow("PupilR_ACC", cv::WINDOW_AUTOSIZE);
+#endif
       // Grab a frame
       cv::Mat temp;
       if (!cap.read(temp)) {
@@ -165,11 +171,6 @@ std::tuple<long, long, long, long> _EF_::EyeFinder::setMinAndMax(
 // getROI
 cv::Rect _EF_::EyeFinder::getROI(std::tuple<long, long, long, long> &tp,
                                  cv::Mat frame) {
-#if EF_DEBUG
-  std::cout << "_EF_::EyeFinder::getROI" << std::get<0>(tp) << " "
-            << std::get<1>(tp) << " " << std::get<2>(tp) << " "
-            << std::get<3>(tp) << std::endl;
-#endif
   auto start_x = std::max(std::get<0>(tp) - 10, long(0));
   auto start_y = std::max(std::get<1>(tp) - 10, long(0));
   auto size_x =
@@ -243,74 +244,6 @@ void _EF_::EyeFinder::calculateFaceAngles(
 }
 
 // *****
-// calculatePupils() a.k.a. Timm-Barth Algorithm
-void _EF_::EyeFinder::calculatePupils(cv::Mat src,
-                                      std::vector<double> &facial_features_vec) {
-
-  cv::Mat src_blur, src_blur_inv;
-  int scale = 1;
-  int delta = 0;
-  int ddepth = CV_64F;
-
-  cv::GaussianBlur(src, src_blur, cv::Size(5, 5), 0, 0, cv::BORDER_DEFAULT);
-  src_blur_inv =
-      cv::Mat::ones(src_blur.size(), src_blur.type()) * 255 - src_blur;
-
-  cv::Mat grad_x, grad_y;
-  cv::Sobel(src, grad_x, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
-  cv::Sobel(src, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
-
-  cv::Mat mag(grad_x.size(), grad_x.type());
-  cv::magnitude(grad_x, grad_y, mag);
-  cv::divide(grad_x, mag, grad_x);
-  cv::divide(grad_y, mag, grad_y);
-
-  cv::Mat pixel_combination_x(src_blur_inv.size(), CV_16S);
-  cv::Mat pixel_combination_y(src_blur_inv.size(), CV_16S);
-
-  int row_LIMIT = src_blur_inv.rows;
-  int col_LIMIT = src_blur_inv.cols;
-
-  double max_objective = -777777.777;
-  int max_r = 0, max_c = 0;
-
-  for (int pixel_r = 10; pixel_r < row_LIMIT - 10; ++pixel_r) {
-    for (int pixel_c = 10; pixel_c < col_LIMIT - 10; ++pixel_c) {
-      double obj_val = 0.0;
-      for (int i = 0; i < row_LIMIT; ++i) {
-        cv::Vec3b *r_grad_x = grad_x.ptr<cv::Vec3b>(i);
-        cv::Vec3b *r_grad_y = grad_y.ptr<cv::Vec3b>(i);
-        cv::Vec3b *r_src_gray_blur_inv = src_blur_inv.ptr<cv::Vec3b>(i);
-        for (int j = 0; j < col_LIMIT; ++j) {
-          int x_val = i - pixel_r;
-          int y_val = j - pixel_c;
-          if ((x_val | y_val) == 0)
-            break;
-          double magnitude = sqrt(x_val * x_val + y_val * y_val);
-          double unit_x = x_val / magnitude;
-          double unit_y = y_val / magnitude;
-
-          double dot = (unit_x * r_grad_x[j][0] + unit_y * r_grad_y[j][0]);
-          double dot2 = dot * dot;
-
-          double pixel_val = r_src_gray_blur_inv[j][0] * dot2;
-          obj_val += pixel_val;
-        }
-      }
-
-      if (obj_val > max_objective) {
-        max_r = pixel_r;
-        max_c = pixel_c;
-        max_objective = obj_val;
-      }
-    }
-  }
-
-  facial_features_vec.push_back((double)max_r);
-  facial_features_vec.push_back((double)max_c);
-}
-
-// *****
 // calculatePupilsEL() a.k.a. Timm-Barth Algorithm using EyeLike
 void _EF_::EyeFinder::calculatePupilsEL(
     const std::vector<dlib::full_object_detection> &shapes,
@@ -343,14 +276,8 @@ void _EF_::EyeFinder::calculatePupilsEL(
 
   double left_pupil_x = (double)leftPupil.x / roi_l.width;
   double left_pupil_y = (double)leftPupil.y / roi_l.height;
-//  std::cout << "test pupil " << leftPupil.y << "  " << roi_l.height << "   " << left_pupil_y << std::endl;
   double right_pupil_x = (double)rightPupil.x / roi_r.width;
   double right_pupil_y = (double)rightPupil.y / roi_r.height;
-//
-//  int real_leftPupil_x = leftPupil.x + roi_l.x;
-//  int real_leftPupil_y = leftPupil.y + roi_l.y;
-//  int real_rightPupil_x = rightPupil.x + roi_r.x;
-//  int real_rightPupil_y = rightPupil.y + roi_r.y;
 
   facial_features_vec.push_back(left_pupil_x);
   facial_features_vec.push_back(left_pupil_y);
@@ -358,6 +285,10 @@ void _EF_::EyeFinder::calculatePupilsEL(
   facial_features_vec.push_back(right_pupil_y);
 
 #if EF_DEBUG_TB
+  int real_leftPupil_x = leftPupil.x + roi_l.x;
+  int real_leftPupil_y = leftPupil.y + roi_l.y;
+  int real_rightPupil_x = rightPupil.x + roi_r.x;
+  int real_rightPupil_y = rightPupil.y + roi_r.y;
   cv::circle(temp, cv::Point(real_leftPupil_x, real_leftPupil_y), 1,
              cv::Scalar(255, 255, 255, 255));
   cv::circle(temp, cv::Point(real_rightPupil_x, real_rightPupil_y), 1,
@@ -365,6 +296,26 @@ void _EF_::EyeFinder::calculatePupilsEL(
   // cv::resize(temp, temp, cv::Size(300,300));
   cv::imshow("LALALA", temp);
   cv::waitKey(1);
+
+  // left and right eye
+  cv::circle(roi_l_mat, cv::Point(leftPupil.x, leftPupil.y), 1,
+             cv::Scalar(255, 255, 255, 255));
+  cv::circle(roi_r_mat, cv::Point(rightPupil.x, rightPupil.y), 1,
+             cv::Scalar(255, 255, 255, 255));
+  cv::resize(roi_l_mat, roi_l_mat,
+             cv::Size(roi_l_mat.cols * 5, roi_l_mat.rows * 5));
+  cv::resize(roi_r_mat, roi_r_mat,
+             cv::Size(roi_r_mat.cols * 5, roi_r_mat.rows * 5));
+  cv::imshow("PupilL", roi_l_mat);
+  cv::imshow("PupilR", roi_r_mat);
+  cv::moveWindow("PupilL", 700, 0);
+  cv::moveWindow("PupilR", 700, 300);
+
+  // More accurate version...
+  cv::imshow("PupilL_ACC", roi_l_mat);
+  cv::imshow("PupilR_ACC", roi_r_mat);
+  cv::moveWindow("PupilL_ACC", 1000, 0);
+  cv::moveWindow("PupilR_ACC", 1000, 300);
 #endif
 }
 

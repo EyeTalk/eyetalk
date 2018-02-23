@@ -37,18 +37,19 @@
 #include <queue>
 #include <stdio.h>
 
-#include "constants.h"
 #include "findEyeCenter.h"
-#include "findEyeCorner.h"
 
 #ifndef EF_DEBUG
-  #define EF_DEBUG 0
+#define EF_DEBUG 0
 #endif
 #ifndef EF_DEBUG_TB
-  #define EF_DEBUG_TB 0
+#define EF_DEBUG_TB 0
+#endif
+#ifndef EF_DEBUG_PUPIL
+#define EF_DEBUG_PUPIL 0
 #endif
 #ifndef EF_DEBUG_FA
-  #define EF_DEBUG_FA 0
+#define EF_DEBUG_FA 0
 #endif
 #define MACRO_START (begin = std::chrono::steady_clock::now())
 #define MACRO_END (end = std::chrono::steady_clock::now())
@@ -105,9 +106,9 @@ private:
   void
   calculateFaceAngles(const std::vector<dlib::full_object_detection> &shapes,
                       std::vector<double> &facial_features_vec);
-  void calculatePupils(cv::Mat src, std::vector<double> &facial_features_vec);
   void calculatePupilsEL(const std::vector<dlib::full_object_detection> &shapes,
-                         std::vector<double> &facial_features_vec, cv::Mat temp);
+                         std::vector<double> &facial_features_vec,
+                         cv::Mat temp);
   void writeFacialFeaturesToShm(const std::vector<double> &facial_features_vec);
   void writeBadFacialFeaturesToShm(void);
 };
