@@ -385,9 +385,6 @@ void _EF_::EyeFinder::writeFacialFeaturesToShm(
     i++;
   }
 
-  // TODO: check if implementation has to change to represent face angles as
-  // floats
-
   sem_post(sem);
   frame_id = ((int)frame_id + 1) % 100;
 }
