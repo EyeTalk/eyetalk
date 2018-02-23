@@ -255,7 +255,7 @@ void _EF_::EyeFinder::calculatePupilsEL(
   std::tuple<long, long, long, long> r_tp =
       EyeFinder::setMinAndMax(42, 47, shapes);
   std::tuple<long, long, long, long> face_tp =
-      EyeFinder::setMinAndMax(1, 16, shapes);
+      EyeFinder::setMinAndMax(1, 47, shapes);
 
   // ROI for left eye + right eye
   cv::Rect roi_l = EyeFinder::getROI(l_tp, temp);
@@ -263,10 +263,12 @@ void _EF_::EyeFinder::calculatePupilsEL(
   cv::Rect roi_face = EyeFinder::getROI(face_tp, temp);
 
   // Display eye tracking on the screen
-  cv::Mat roi_l_mat, roi_r_mat, roi_face_mat;
+  cv::Mat roi_l_mat, roi_r_mat, roi_face_mat, roi_l_mat_acc, roi_r_mat_acc;
   roi_l_mat = temp(roi_l);
   roi_r_mat = temp(roi_r);
   roi_face_mat = temp(roi_face);
+  roi_l_mat_acc = roi_l_mat.clone();
+  roi_r_mat_acc = roi_r_mat.clone();
 
   cv::Mat temp_clone = temp.clone();
   cv::GaussianBlur(temp_clone, temp_clone, cv::Size(0, 0),
@@ -274,10 +276,31 @@ void _EF_::EyeFinder::calculatePupilsEL(
   cv::Point leftPupil = findEyeCenter(temp_clone, roi_l, "Left Eye");
   cv::Point rightPupil = findEyeCenter(temp_clone, roi_r, "Right Eye");
 
-  double left_pupil_x = (double)leftPupil.x / roi_l.width;
-  double left_pupil_y = (double)leftPupil.y / roi_l.height;
-  double right_pupil_x = (double)rightPupil.x / roi_r.width;
-  double right_pupil_y = (double)rightPupil.y / roi_r.height;
+  cv::Mat face_clone = roi_face_mat.clone();
+  cv::Rect roi_l_acc(
+      cv::Point(roi_l.x - roi_face.x, std::abs(roi_l.y - roi_face.y)),
+      roi_l.size());
+  cv::Rect roi_r_acc(
+      cv::Point(roi_r.x - roi_face.x, std::abs(roi_r.y - roi_face.y)),
+      roi_r.size());
+  cv::GaussianBlur(face_clone, face_clone, cv::Size(0, 0),
+                   0.015 * roi_face.width);
+  cv::Point leftPupil_acc = findEyeCenter(face_clone, roi_l_acc, "Left Eye");
+  cv::Point rightPupil_acc = findEyeCenter(face_clone, roi_r_acc, "Right Eye");
+#if EF_DEBUG
+  printf(" ::: %d %d\n", roi_l_acc.x, roi_l_acc.y);
+#endif
+
+  // Old...
+  // double left_pupil_x = (double)leftPupil.x / roi_l.width;
+  // double left_pupil_y = (double)leftPupil.y / roi_l.height;
+  // double right_pupil_x = (double)rightPupil.x / roi_r.width;
+  // double right_pupil_y = (double)rightPupil.y / roi_r.height;
+
+  double left_pupil_x = (double)leftPupil_acc.x / roi_l.width;
+  double left_pupil_y = (double)leftPupil_acc.y / roi_l.height;
+  double right_pupil_x = (double)rightPupil_acc.x / roi_r.width;
+  double right_pupil_y = (double)rightPupil_acc.y / roi_r.height;
 
   facial_features_vec.push_back(left_pupil_x);
   facial_features_vec.push_back(left_pupil_y);
@@ -303,17 +326,25 @@ void _EF_::EyeFinder::calculatePupilsEL(
   cv::circle(roi_r_mat, cv::Point(rightPupil.x, rightPupil.y), 1,
              cv::Scalar(255, 255, 255, 255));
   cv::resize(roi_l_mat, roi_l_mat,
-             cv::Size(roi_l_mat.cols * 5, roi_l_mat.rows * 5));
+             cv::Size(roi_l_mat.cols * 7, roi_l_mat.rows * 7));
   cv::resize(roi_r_mat, roi_r_mat,
-             cv::Size(roi_r_mat.cols * 5, roi_r_mat.rows * 5));
+             cv::Size(roi_r_mat.cols * 7, roi_r_mat.rows * 7));
   cv::imshow("PupilL", roi_l_mat);
   cv::imshow("PupilR", roi_r_mat);
   cv::moveWindow("PupilL", 700, 0);
   cv::moveWindow("PupilR", 700, 300);
 
   // More accurate version...
-  cv::imshow("PupilL_ACC", roi_l_mat);
-  cv::imshow("PupilR_ACC", roi_r_mat);
+  cv::circle(roi_l_mat_acc, cv::Point(leftPupil_acc.x, leftPupil_acc.y), 1,
+             cv::Scalar(255, 255, 255, 255));
+  cv::circle(roi_r_mat_acc, cv::Point(rightPupil_acc.x, rightPupil_acc.y), 1,
+             cv::Scalar(255, 255, 255, 255));
+  cv::resize(roi_l_mat_acc, roi_l_mat_acc,
+             cv::Size(roi_l_mat_acc.cols * 7, roi_l_mat_acc.rows * 7));
+  cv::resize(roi_r_mat_acc, roi_r_mat_acc,
+             cv::Size(roi_r_mat_acc.cols * 7, roi_r_mat_acc.rows * 7));
+  cv::imshow("PupilL_ACC", roi_l_mat_acc);
+  cv::imshow("PupilR_ACC", roi_r_mat_acc);
   cv::moveWindow("PupilL_ACC", 1000, 0);
   cv::moveWindow("PupilR_ACC", 1000, 300);
 #endif
