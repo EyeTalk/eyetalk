@@ -341,15 +341,21 @@ void _EF_::EyeFinder::calculatePupilsEL(
   cv::Point leftPupil = findEyeCenter(temp_clone, roi_l, "Left Eye");
   cv::Point rightPupil = findEyeCenter(temp_clone, roi_r, "Right Eye");
 
-  int real_leftPupil_x = leftPupil.x + roi_l.x;
-  int real_leftPupil_y = leftPupil.y + roi_l.y;
-  int real_rightPupil_x = rightPupil.x + roi_r.x;
-  int real_rightPupil_y = rightPupil.y + roi_r.y;
+  double left_pupil_x = (double)leftPupil.x / roi_l.width;
+  double left_pupil_y = (double)leftPupil.y / roi_l.height;
+//  std::cout << "test pupil " << leftPupil.y << "  " << roi_l.height << "   " << left_pupil_y << std::endl;
+  double right_pupil_x = (double)rightPupil.x / roi_r.width;
+  double right_pupil_y = (double)rightPupil.y / roi_r.height;
+//
+//  int real_leftPupil_x = leftPupil.x + roi_l.x;
+//  int real_leftPupil_y = leftPupil.y + roi_l.y;
+//  int real_rightPupil_x = rightPupil.x + roi_r.x;
+//  int real_rightPupil_y = rightPupil.y + roi_r.y;
 
-  facial_features_vec.push_back((double)real_leftPupil_x);
-  facial_features_vec.push_back((double)real_leftPupil_y);
-  facial_features_vec.push_back((double)real_rightPupil_x);
-  facial_features_vec.push_back((double)real_rightPupil_y);
+  facial_features_vec.push_back(left_pupil_x);
+  facial_features_vec.push_back(left_pupil_y);
+  facial_features_vec.push_back(right_pupil_x);
+  facial_features_vec.push_back(right_pupil_y);
 
 #if EF_DEBUG_TB
   cv::circle(temp, cv::Point(real_leftPupil_x, real_leftPupil_y), 1,

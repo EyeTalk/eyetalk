@@ -3,7 +3,8 @@ import sys
 from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtWidgets import (QApplication, QGraphicsView,
-                             QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
+        QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
+
 from pymongo import MongoClient
 
 from backend.GazeDetector import GazeDetector
@@ -167,7 +168,7 @@ class Example(QGraphicsView):
             data_id = x[0]
             if data_id == last_id:
                 label = self.test_mapping(y)
-                final_data.append(x[1:])
+                final_data.append(x[25:29])
                 final_labels.append(label)
 
             last_id = data_id
@@ -182,16 +183,26 @@ class Example(QGraphicsView):
 
         data, labels = self.format_data_for_machine_learning(self.data)
 
-        self.gaze.train_location_classifier(data, labels, 20000)
+        self.gaze.train_location_classifier(data, labels, 1000)
 
-        test_data = data[200]
-        test_label = labels[200]
+        total = 0
+        count = 0
 
-        new_label = self.gaze.calculate_location_probabilities_from_features(test_data)
+        for i in range(len(data)):
+            test_data = data[i]
+            test_label = labels[i]
+            new_label = self.gaze.calculate_location_probabilities_from_features(test_data)
+            print(test_label, new_label)
+            test = np.argmax(new_label)
+            count += int(test == test_label)
+            total += 1
 
-        print(test_label, new_label)
+        print(count, total)
+        percent = count * 1.0 / total
 
-        # self.dataSent = True
+        print('Percent correct:', percent)
+
+        self.dataSent = True
 
         client = MongoClient()
         client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')

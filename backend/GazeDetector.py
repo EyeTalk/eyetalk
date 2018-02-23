@@ -32,10 +32,11 @@ class GazeDetector:
 
     def init_model(self):
         model = Sequential()
-        model.add(Dense(20, input_shape=(30,), kernel_initializer='uniform', activation='sigmoid'))
-        model.add(Dense(20, kernel_initializer='uniform', activation='sigmoid'))
+        model.add(Dense(20, input_shape=(4,), kernel_initializer='uniform', activation='relu'))
+        model.add(Dense(20, kernel_initializer='uniform', activation='relu'))
+        # model.add(Dense(20, kernel_initializer='uniform', activation='sigmoid'))
         model.add(Dense(4, activation="softmax"))
-        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.01))
+        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.02))
         self.neural_network = model
 
     def sample(self):
@@ -56,7 +57,7 @@ class GazeDetector:
 
         self.last_id_seen = feature_id
 
-        probabilities = self.calculate_location_probabilities_from_features(features[1:])
+        probabilities = self.calculate_location_probabilities_from_features(features[25:29])
 
         return probabilities
 
@@ -89,7 +90,7 @@ class GazeDetector:
         prediction_vals = self.neural_network.predict(features)
         return prediction_vals
 
-    def train_location_classifier(self, data, labels, num_epochs=100):
+    def train_location_classifier(self, data, labels, num_epochs=1000):
         """
         Train location classifier using data
         :param data: a ndarray of shape(N, 30) of N rows of numerical features
