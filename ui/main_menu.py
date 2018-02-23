@@ -2,8 +2,8 @@ from ui.base_8_button import BaseEightButton
 
 
 class EightButtonMainMenu(BaseEightButton):
-    def __init__(self, parent):
-        BaseEightButton.__init__(self, parent)
+    def __init__(self, parent, detector):
+        BaseEightButton.__init__(self, parent, detector)
         self.base_string = "Please select an option"
 
         self.set_button_texts()

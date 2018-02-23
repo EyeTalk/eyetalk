@@ -1,3 +1,4 @@
+from threading import Thread
 from pymongo import MongoClient
 from PyQt5.QtWidgets import (QGraphicsView,
         QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
@@ -5,7 +6,8 @@ from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 from ui.ui_layout import build_layout_dictionary
 
-EACH_BUTTON_TIME = 550
+
+EACH_BUTTON_TIME = 1500
 
 
 class Ball(QObject):
@@ -141,7 +143,9 @@ class Calibration(QGraphicsView):
                 <p>Calibrating...</p>
             """
             self.textbox.setHtml(text)
-            self.train_machine_learning()
+
+            thread = Thread(target=self.train_machine_learning)
+            thread.start()
 
         else:
             text = """
@@ -185,7 +189,20 @@ class Calibration(QGraphicsView):
         return final_data
 
     def train_machine_learning(self):
-        # TODO: do ML training here
+        filtered_data = self.parseData(self.data)
+        training_data = []
+        training_labels = []
+
+        for x, y in filtered_data:
+            x_vector = self.detector.extract_used_features(x)
+            training_data.append(x_vector)
+            training_labels.append(y)
+
+        self.detector.train_location_classifier(training_data, training_labels)
+        self.finished_calibration = True
+
+        self.detector.test_accuracy(training_data, training_labels)
+
         self.finished_calibration = True
 
     def sample_features(self):

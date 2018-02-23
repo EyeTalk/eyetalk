@@ -4,8 +4,8 @@ from ui.word_recommendations.recommendations import RecommendationSystem
 
 class EightButtonKeyboard(BaseEightButton):
 
-    def __init__(self, parent):
-        BaseEightButton.__init__(self, parent)
+    def __init__(self, parent, detector):
+        BaseEightButton.__init__(self, parent, detector)
 
         self.label_text = ''
 
@@ -173,3 +173,8 @@ class EightButtonKeyboard(BaseEightButton):
         else:
             self.topLeftButton.setText(MAINMENU)
             self.load_keyboard_screen(0)
+
+    def top_right_button_onclick(self):
+        # GTTS stuff
+        self.clear_all()
+        self.load_keyboard_screen(0)

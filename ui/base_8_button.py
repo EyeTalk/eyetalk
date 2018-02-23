@@ -7,9 +7,10 @@ from ui.ui_layout import build_layout_dictionary, build_layout_element
 
 class BaseEightButton(QWidget):
 
-    def __init__(self, parent):
+    def __init__(self, parent, detector):
         QMainWindow.__init__(self)
         self.parent = parent
+        self.detector = detector
 
         self.pushButton_1 = None
         self.pushButton_2 = None
