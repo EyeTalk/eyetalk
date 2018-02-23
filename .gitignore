@@ -2,7 +2,6 @@
 .DS_Store
 __pycache__/**
 *.pyc
-*.png
 **/build/**
 **/eyefinder_cpp/shape*
 python_dependencies/**
