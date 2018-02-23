@@ -45,67 +45,78 @@ def build_layout_dictionary(screen_width, screen_height):
                 'top_left_x': border.x(),
                 'top_left_y': screen_height - 2 * (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 1
             },
             'pushButton_2': {
                 'top_left_x': border.x() + (border.x() + circle_button_diameter),
                 'top_left_y': screen_height - 2 * (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 2
             },
             'pushButton_3': {
                 'top_left_x': border.x() + 2 * (border.x() + circle_button_diameter),
                 'top_left_y': screen_height - 2 * (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 3
             },
             'pushButton_4': {
                 'top_left_x': border.x() + 3 * (border.x() + circle_button_diameter),
                 'top_left_y': screen_height - 2 * (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 4
             },
             'pushButton_5': {
                 'top_left_x': border.x(),
                 'top_left_y': screen_height - (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 5
             },
             'pushButton_6': {
                 'top_left_x': border.x() + (border.x() + circle_button_diameter),
                 'top_left_y': screen_height - (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 6
             },
             'pushButton_7': {
                 'top_left_x': border.x() + 2 * (border.x() + circle_button_diameter),
                 'top_left_y': screen_height - (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 7
             },
             'pushButton_8': {
                 'top_left_x': border.x() + 3 * (border.x() + circle_button_diameter),
                 'top_left_y': screen_height - (border.y() + circle_button_diameter),
                 'width': circle_button_diameter,
-                'height': circle_button_diameter
+                'height': circle_button_diameter,
+                'label': 8
             },
             'topLeftButton': {
                 'top_left_x': 0,
                 'top_left_y': 0,
                 'width': box_button_size.x(),
                 'height': box_button_size.y(),
+                'label': 9
             },
             'topRightButton': {
                 'top_left_x': screen_width - box_button_size.x(),
                 'top_left_y': 0,
                 'width': box_button_size.x(),
                 'height': box_button_size.y(),
+                'label': 10
             },
             'textLabel': {
                 'top_left_x': box_button_size.x(),
                 'top_left_y': 0,
                 'width': screen_width - 2 * box_button_size.x(),
                 'height': box_button_size.y(),
+                'label': 0
             }
         }
     }

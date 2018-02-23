@@ -1,8 +1,11 @@
+from pymongo import MongoClient
 from PyQt5.QtWidgets import (QGraphicsView,
         QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
 from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 from ui.ui_layout import build_layout_dictionary
+
+EACH_BUTTON_TIME = 550
 
 
 class Ball(QObject):
@@ -18,20 +21,23 @@ class Ball(QObject):
 
 
 class Calibration(QGraphicsView):
-    def __init__(self, parent):
+    def __init__(self, parent, detector, calibrate_now=True):
         super().__init__()
 
         self.parent = parent
+        self.detector = detector
         self.initView()
         self.data = []
+        self.current_label = -1
+
+        self.train_at_end = calibrate_now
 
     def initView(self):
         self.showFullScreen()
 
-        ag = QDesktopWidget().availableGeometry()
-        sg = QDesktopWidget().screenGeometry()
-        self.screen_width = ag.width()
-        self.screen_height = ag.height()
+        self.sg = QDesktopWidget().screenGeometry()
+        self.screen_width = self.sg.width()
+        self.screen_height = self.sg.height()
 
         self.setWindowTitle("Calibration")
         self.setRenderHint(QPainter.Antialiasing)
@@ -44,9 +50,8 @@ class Calibration(QGraphicsView):
         self.textbox.setReadOnly(True)
         self.textbox.move(self.screen_width / 2 - self.textbox.width(), self.screen_height / 2 - self.textbox.height())
         text = """
-            <h2>Calibration GUI</h2>
-            <p>Please stare at the red ball while it moves</p>
-            <p>Ball will begin in the top left corner</p>
+            <h2>Calibration</h2>
+            <p>Please follow the red ball as it jumps around</p>
         """
 
         self.textbox.setHtml(text)
@@ -54,17 +59,13 @@ class Calibration(QGraphicsView):
         self.textbox.setFrameStyle(0)
         self.textbox.show()
 
-        timer = QTimer(self)
-        timer.timeout.connect(self.endPreBallMessage)
-        timer.start(1000)
-        self.timer = timer
+        QTimer.singleShot(3000, self.endPreBallMessage)
 
     def endPreBallMessage(self):
         self.textbox.deleteLater()
         self.textbox.hide()
         del self.textbox
 
-        self.timer.stop()
         self.initBallAnimation()
 
     def initBallAnimation(self):
@@ -72,16 +73,15 @@ class Calibration(QGraphicsView):
         self.ball_width = self.ball.pixmap_item.boundingRect().size().width()
         self.ball_height = self.ball.pixmap_item.boundingRect().size().height()
 
-        sg = QDesktopWidget().screenGeometry()
-        layout = build_layout_dictionary(sg.width(), sg.height())
+        layout = build_layout_dictionary(self.screen_width,self.screen_height)
         elements = layout['elements']
 
-        self.pos = 0
+        self.pos = -1
+        element_items = elements.items()
         self.button_positions = [QPointF(elem['top_left_x'] + elem['width'] / 2 - self.ball_width / 2,
                                          elem['top_left_y'] + elem['height'] / 2 - self.ball_height / 2)
-                                 for _, elem in elements.items()]
-
-        self.ball.pixmap_item.setPos(self.button_positions[0])
+                                 for _, elem in element_items]
+        self.button_labels = [elem['label'] for _, elem in element_items]
 
         self.scene = QGraphicsScene(self)
         self.scene.setSceneRect(0, 0, self.screen_width, self.screen_height)
@@ -90,28 +90,31 @@ class Calibration(QGraphicsView):
 
         self.position_timer = QTimer()
         self.position_timer.timeout.connect(self.move_ball)
-        self.position_timer.start(1250)
+        self.position_timer.start(EACH_BUTTON_TIME)
 
-        # self.sample_timer = QTimer(self)
-        # self.sample_timer.timeout.connect(self.sample_features)
-        # self.sample_timer.start(5)
+        self.sample_timer = QTimer(self)
+        self.sample_timer.timeout.connect(self.sample_features)
 
-        self.end_timer = QTimer(self)
-        self.end_timer.timeout.connect(self.endBallAnimation)
-        self.end_timer.start(1250 * len(self.button_positions) * 2)
-
+        total_timeout = EACH_BUTTON_TIME * len(self.button_positions) * 2
+        QTimer.singleShot(total_timeout, self.endBallAnimation)
 
     def move_ball(self):
-        next_position = (self.pos + 1) % len(self.button_positions)
-        self.ball.pixmap_item.setPos(self.button_positions[next_position])
-        self.pos += 1
+        self.pos = (self.pos + 1) % len(self.button_positions)
+        self.ball.pixmap_item.setPos(self.button_positions[self.pos])
+        self.current_label = self.button_labels[self.pos]
+
+        # temporarily suspend sampling to allow eye to switch to new location
+        self.sample_timer.stop()
+        QTimer.singleShot(500, self.start_sampling)
+
+    def start_sampling(self):
+        if self.sample_timer:
+            self.sample_timer.start(5)
 
     def endBallAnimation(self):
         self.scene.removeItem(self.ball.pixmap_item)
-        # self.sample_timer.stop()
-        # self.sample_timer = None
-        self.end_timer.stop()
-        del self.end_timer
+        self.sample_timer.stop()
+        self.sample_timer = None
         self.position_timer.stop()
         del self.position_timer
         self.ball.deleteLater()
@@ -125,42 +128,67 @@ class Calibration(QGraphicsView):
         self.textbox.setFrameStyle(0)
 
         self.textbox.move(self.screen_width / 2 - self.textbox.width(), self.screen_height / 2 - self.textbox.height())
-
-        text = """
-            <h2>Data gathering complete!</h2>
-            <p>The data will now be sent to our database</p>
-        """
-
         self.textbox.setAlignment(Qt.AlignCenter)
-        self.textbox.setHtml(text)
         self.textbox.show()
 
-        self.dataSent = False
+        self.finished_calibration = False
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.endPostBallMessage)
-        self.timer.start(3000)
+        QTimer.singleShot(3000, self.endPostBallMessage)
 
-        self.sendData()
+        if self.train_at_end:
+            text = """
+                <h2>Data gathering complete!</h2>
+                <p>Calibrating...</p>
+            """
+            self.textbox.setHtml(text)
+            self.train_machine_learning()
+
+        else:
+            text = """
+                <h2>Data gathering complete!</h2>
+                <p>The data will now be sent to our database.</p>
+            """
+            self.textbox.setHtml(text)
+            self.sendData()
 
     def endPostBallMessage(self):
-
-        if self.dataSent:
+        if self.finished_calibration:
             self.close()
             self.parent.stacked_widget.setCurrentIndex(1)
-            self.timer.stop()
-
-            self.timer.deleteLater()
-            del self.timer
+        else:
+            QTimer.singleShot(1000, self.endPostBallMessage)
 
     def sendData(self):
-        self.dataSent = True
+        data = self.parseData(self.data)
+        client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
+        db = client['eyedata-devel']
+        collection = db.Test
 
-        # TODO: Implement data send to database
+        data_to_send = [{'x': x, 'y': y} for x, y in data]
+        insertTest = collection.insert_many(data_to_send)
+        # insertTest.inserted_ids
 
-    def sample_features(self, detector, queue, pos):
-        x, y = int(pos.x()) + self.ball_width / 2, int(pos.y()) + self.ball_height / 2
+        self.finished_calibration = True
 
-        x_max, y_max = self.screen_width, self.screen_height
-        features = detector.sample_features_mock()
-        queue.put((features, [x, y, x_max, y_max]))
+    def parseData(self, inputData):
+        final_data = []
+
+        last_id = -1
+
+        for x, y in inputData:
+            data_id = x[0]
+            if data_id == last_id:
+                final_data.append((x, y))
+
+            last_id = data_id
+
+        return final_data
+
+    def train_machine_learning(self):
+        # TODO: do ML training here
+        self.finished_calibration = True
+
+    def sample_features(self):
+        features = self.detector.sample_features()
+        label = self.current_label
+        self.data.append((features, label))
