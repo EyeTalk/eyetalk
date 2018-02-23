@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QPointF, QRect
-from PyQt5.QtWidgets import QPushButton, QTextBrowser
+from PyQt5.QtWidgets import QPushButton, QLabel
 
 
 def build_layout_dictionary(screen_width, screen_height):
@@ -27,12 +27,19 @@ def build_layout_dictionary(screen_width, screen_height):
                      "border-radius: 0px;\n" \
                      "}"
 
+    label_stylesheet = "QLabel{\n" \
+                     "background-color: white;\n" \
+                     "qproperty-alignment: AlignCenter;\n" \
+                     "}"
+
+
     return {
         'width': screen_width,
         'height': screen_height,
         'border': border,
         'circle_stylesheet': circle_stylesheet,
         'box_stylesheet': box_stylesheet,
+        'label_stylesheet': label_stylesheet,
         'elements': {
             'pushButton_1': {
                 'top_left_x': border.x(),
@@ -94,7 +101,7 @@ def build_layout_dictionary(screen_width, screen_height):
                 'width': box_button_size.x(),
                 'height': box_button_size.y(),
             },
-            'textBrowser': {
+            'textLabel': {
                 'top_left_x': box_button_size.x(),
                 'top_left_y': 0,
                 'width': screen_width - 2 * box_button_size.x(),
@@ -122,14 +129,18 @@ def build_layout_element(parent, layout, element_name):
         return button
 
     elif element_name.startswith('text'):
-        browser = QTextBrowser(parent)
+        label = QLabel(parent)
 
-        browser.setGeometry(QRect(elem_layout['top_left_x'], elem_layout['top_left_y'],
+        label.setGeometry(QRect(elem_layout['top_left_x'], elem_layout['top_left_y'],
                                   elem_layout['width'], elem_layout['height']))
-        browser.setText("")
-        browser.setObjectName(element_name)
 
-        return browser
+        stylesheet = layout['label_stylesheet']
+        label.setStyleSheet(stylesheet)
+
+        label.setText("")
+        label.setObjectName(element_name)
+
+        return label
 
     else:
         return None

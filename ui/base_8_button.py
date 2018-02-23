@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QDesktopWidget, QMainWindow, QWidget
 from PyQt5.QtCore import QMetaObject
+from PyQt5.QtCore import Qt
 
 from ui.ui_layout import build_layout_dictionary, build_layout_element
 
@@ -20,7 +21,7 @@ class BaseEightButton(QWidget):
         self.pushButton_8 = None
         self.topLeftButton = None
         self.topRightButton = None
-        self.textBrowser = None
+        self.textLabel = None
 
         self.text_string = ""
 
@@ -47,7 +48,7 @@ class BaseEightButton(QWidget):
         self.pushButton_8 = build_layout_element(self, layout_dict, 'pushButton_8')
         self.topLeftButton = build_layout_element(self, layout_dict, 'topLeftButton')
         self.topRightButton = build_layout_element(self, layout_dict, 'topRightButton')
-        self.textBrowser = build_layout_element(self, layout_dict, 'textBrowser')
+        self.textLabel = build_layout_element(self, layout_dict, 'textLabel')
 
         QMetaObject.connectSlotsByName(self)
 
@@ -61,10 +62,11 @@ class BaseEightButton(QWidget):
         self.pushButton_8.clicked.connect(self.push_button_8_onclick)
         self.topLeftButton.clicked.connect(self.top_left_button_onclick)
         self.topRightButton.clicked.connect(self.top_right_button_onclick)
+        self.textLabel.setAlignment(Qt.AlignHCenter)
 
-    def set_text_browser(self, text):
+    def set_text_label(self, text):
         self.text_string = text
-        self.textBrowser.setText(text)
+        self.textLabel.setText(text)
 
     """
     Simply override any of these methods in a subclass to implement a click handler

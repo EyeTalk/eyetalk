@@ -7,7 +7,7 @@ class EightButtonMainMenu(BaseEightButton):
         self.base_string = "Please select an option"
 
         self.set_button_texts()
-        self.set_text_browser(self.base_string)
+        self.set_text_label(self.base_string)
 
     def closeApp(self):
         self.close()
