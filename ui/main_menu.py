@@ -14,7 +14,7 @@ class EightButtonMainMenu(BaseEightButton):
         self.parent.close()
 
     def openWindow(self, num):
-        self.parent.stacked_widget.setCurrentIndex(num)
+        self.parent.set_active_widget(num)
 
     def set_button_texts(self):
         self.setWindowTitle("EyeTalk")
@@ -27,6 +27,9 @@ class EightButtonMainMenu(BaseEightButton):
         self.pushButton_7.setText("Games")
         self.pushButton_8.setText("Keyboard")
         self.topLeftButton.setText("Exit")
+
+    def push_button_1_onclick(self):
+        self.openWindow(0)
 
     def push_button_8_onclick(self):
         self.openWindow(2)

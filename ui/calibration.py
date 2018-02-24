@@ -28,11 +28,17 @@ class Calibration(QGraphicsView):
 
         self.parent = parent
         self.detector = detector
+
+        self.is_active = False
         self.initView()
         self.data = []
         self.current_label = -1
 
         self.train_at_end = calibrate_now
+
+    def set_active(self):
+        self.is_active = True
+        self.initPreBallMessage()
 
     def initView(self):
         self.showFullScreen()
@@ -43,8 +49,6 @@ class Calibration(QGraphicsView):
 
         self.setWindowTitle("Calibration")
         self.setRenderHint(QPainter.Antialiasing)
-
-        self.initPreBallMessage()
 
 
     def initPreBallMessage(self):
@@ -158,7 +162,7 @@ class Calibration(QGraphicsView):
     def endPostBallMessage(self):
         if self.finished_calibration:
             self.close()
-            self.parent.stacked_widget.setCurrentIndex(1)
+            self.parent.set_active_widget(1)
         else:
             QTimer.singleShot(1000, self.endPostBallMessage)
 

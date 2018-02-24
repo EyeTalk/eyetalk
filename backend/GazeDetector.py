@@ -29,6 +29,7 @@ class GazeDetector:
         self.init_model()
 
         self.last_id_seen = -1
+        self.last_probabilities = None
 
     def init_model(self):
         model = Sequential()
@@ -48,16 +49,18 @@ class GazeDetector:
 
         feature_id = features[0]
 
-        while feature_id == self.last_id_seen:
-            features = self.sample_features()
+        if feature_id != self.last_id_seen:
 
-        self.last_id_seen = feature_id
+            self.last_id_seen = feature_id
 
-        used_features = self.extract_used_features(features)
+            used_features = self.extract_used_features(features)
+            probabilities = self.calculate_location_probabilities_from_features(used_features)
+            self.last_probabilities = probabilities
 
-        probabilities = self.calculate_location_probabilities_from_features(used_features)
+        else:
+            probabilities = self.last_probabilities
 
-        return probabilities
+        return feature_id, probabilities
 
     def cleanup(self):
         """

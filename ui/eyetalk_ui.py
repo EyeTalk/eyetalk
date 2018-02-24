@@ -25,5 +25,9 @@ class MainUIWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(Calibration(self, self.detector))
         self.stacked_widget.addWidget(EightButtonMainMenu(self, self.detector))
         self.stacked_widget.addWidget(EightButtonKeyboard(self, self.detector))
-        self.stacked_widget.setCurrentIndex(1)
+        self.set_active_widget(0)
+
+    def set_active_widget(self, widget_number):
+        self.stacked_widget.setCurrentIndex(widget_number)
+        self.stacked_widget.widget(widget_number).set_active()
 
