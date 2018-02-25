@@ -29,7 +29,7 @@ class EightButtonMainMenu(BaseEightButton):
         self.topLeftButton.setText("Exit")
 
     def push_button_1_onclick(self):
-        self.openWindow(0)
+        self.openWindow(3)
 
     def push_button_8_onclick(self):
         self.openWindow(2)
