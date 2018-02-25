@@ -84,7 +84,7 @@ class EightButtonKeyboard(BaseEightButton):
     def add_predicted(self, text_word):
         space_index = self.label_text.rfind(' ')
         if space_index > 0:
-            self.label_text = self.label_text[:space_index+1-len(self.label_text)]
+            self.label_text = self.label_text[:space_index+1]
             self.label_text += text_word
             self.set_text_label(self.label_text)
         else:
