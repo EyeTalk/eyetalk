@@ -18,6 +18,8 @@ def build_layout_dictionary(screen_width, screen_height):
                         "border-color: black;\n" \
                         "border-width: " + str(button_border_width) + "px;\n" \
                         "border-radius: " + str(circle_border_radius) + "px;\n" \
+                        "font-size: 30pt;\n" \
+                        "font-weight: bold;\n" \
                         "}"
 
     box_stylesheet = "QPushButton{\n" \
@@ -25,11 +27,15 @@ def build_layout_dictionary(screen_width, screen_height):
                      "border-color: black;\n" \
                      "border-width: " + str(button_border_width) + "px;\n" \
                      "border-radius: 0px;\n" \
+                     "font-size: 30pt;\n" \
+                     "font-weight: bold;\n" \
                      "}"
 
     label_stylesheet = "QLabel{\n" \
                      "background-color: white;\n" \
                      "qproperty-alignment: AlignCenter;\n" \
+                     "font-size: 30pt;\n" \
+                     "font-weight: bold;\n" \
                      "}"
 
 

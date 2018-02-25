@@ -85,7 +85,7 @@ class BaseEightButton(QWidget):
         self.pushButton_8.clicked.connect(self.push_button_8_onclick)
         self.topLeftButton.clicked.connect(self.top_left_button_onclick)
         self.topRightButton.clicked.connect(self.top_right_button_onclick)
-        self.textLabel.setAlignment(Qt.AlignHCenter)
+        self.textLabel.setWordWrap(True)
 
     def set_text_label(self, text):
         self.text_string = text
