@@ -53,14 +53,19 @@ class EightButtonKeyboard(BaseEightButton):
             self.pushButton_3.setDisabled(True)
             wordList = self.rec.get_recommendation(self.label_text)
             if len(wordList) > 0:
-                self.text_1 = wordList[0]
+                self.text_1 = wordList[0].upper()
                 self.pushButton_1.setEnabled(True)
             if len(wordList) > 1:
-                self.text_2 = wordList[1]
+                self.text_2 = wordList[1].upper()
                 self.pushButton_2.setEnabled(True)
             if len(wordList) > 2:
-                self.text_3 = wordList[2]
+                self.text_3 = wordList[2].upper()
                 self.pushButton_3.setEnabled(True)
+        else:
+            self.pushButton_1.setEnabled(True)
+            self.pushButton_2.setEnabled(True)
+            self.pushButton_3.setEnabled(True)
+
 
         self.pushButton_1.setText(self.text_1)
         self.pushButton_2.setText(self.text_2)
