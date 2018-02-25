@@ -87,24 +87,6 @@ class BaseTwoButton(QWidget):
     def push_button_2_onclick(self):
         pass
 
-    def push_button_3_onclick(self):
-        pass
-
-    def push_button_4_onclick(self):
-        pass
-
-    def push_button_5_onclick(self):
-        pass
-
-    def push_button_6_onclick(self):
-        pass
-
-    def push_button_7_onclick(self):
-        pass
-
-    def push_button_8_onclick(self):
-        pass
-
     def top_left_button_onclick(self):
         pass
 
