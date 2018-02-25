@@ -48,13 +48,19 @@ class EightButtonKeyboard(BaseEightButton):
         self.text_8 = layout[7]
 
         if keyboard_index == 0:
+            self.pushButton_1.setDisabled(True)
+            self.pushButton_2.setDisabled(True)
+            self.pushButton_3.setDisabled(True)
             wordList = self.rec.get_recommendation(self.label_text)
             if len(wordList) > 0:
                 self.text_1 = wordList[0]
+                self.pushButton_1.setEnabled(True)
             if len(wordList) > 1:
                 self.text_2 = wordList[1]
+                self.pushButton_2.setEnabled(True)
             if len(wordList) > 2:
                 self.text_3 = wordList[2]
+                self.pushButton_3.setEnabled(True)
 
         self.pushButton_1.setText(self.text_1)
         self.pushButton_2.setText(self.text_2)

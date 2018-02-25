@@ -1,5 +1,5 @@
 BASE = 'BASE'
-PREDICTED = 'PREDICTED'
+PREDICTED = 'NO PREDICTED WORD'
 NUMBERS = 'Numbers or Symbols'
 ABC = 'A B C D E F G\nSpace'
 HIJ = 'H I J K L M N\nBackspace'
