@@ -20,16 +20,19 @@ class EightButtonMainMenu(BaseEightButton):
         self.setWindowTitle("EyeTalk")
         self.pushButton_1.setText("Yes / No")
         self.pushButton_2.setText("Body")
-        self.pushButton_3.setText("Greetings")
+        self.pushButton_3.setText("Move")
         self.pushButton_4.setText("Bell")
-        self.pushButton_5.setText("Jokes")
-        self.pushButton_6.setText("Music")
+        self.pushButton_5.setText("Greetings")
+        self.pushButton_6.setText("Entertainment")
         self.pushButton_7.setText("Games")
         self.pushButton_8.setText("Keyboard")
         self.topLeftButton.setText("Exit")
 
     def push_button_1_onclick(self):
         self.openWindow(3)
+
+    def push_button_5_onclick(self):
+        self.openWindow(4)
 
     def push_button_8_onclick(self):
         self.openWindow(2)

@@ -69,3 +69,14 @@ TEXT_LAYOUTS = {
         '!'
     ]
 }
+
+GREETINGS = [
+    "Hello,\nhow are you?",
+    "Good to\nsee you",
+    "Good\nmorning",
+    "Good\nafternoon",
+    "Goodnight",
+    "Goodbye",
+    "I'm\ndoing well",
+    "I'm not\ndoing well",
+]

@@ -6,6 +6,7 @@ from ui.calibration import Calibration
 from ui.main_menu import EightButtonMainMenu
 from ui.keyboard import EightButtonKeyboard
 from ui.yes_no import TwoButtonYesNo
+from ui.greetings import EightButtonGreeting
 
 from backend.GazeDetector import GazeDetector
 
@@ -27,6 +28,7 @@ class MainUIWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(EightButtonMainMenu(self, self.detector))
         self.stacked_widget.addWidget(EightButtonKeyboard(self, self.detector))
         self.stacked_widget.addWidget(TwoButtonYesNo(self, self.detector))
+        self.stacked_widget.addWidget(EightButtonGreeting(self, self.detector))
         self.set_active_widget(0)
 
     def set_active_widget(self, widget_number):
