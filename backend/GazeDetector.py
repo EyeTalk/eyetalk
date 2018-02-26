@@ -7,6 +7,7 @@ from keras.layers import Dense
 from keras.models import Sequential
 from keras.optimizers import SGD
 from keras.utils.np_utils import to_categorical
+from keras.callbacks import Callback
 
 from backend.ipc_reader import IPCReader
 
@@ -30,6 +31,9 @@ class GazeDetector:
 
         self.last_id_seen = -1
         self.last_probabilities = None
+
+        self.training_epochs = 0
+        self.current_epoch = 0
 
     def init_model(self):
         model = Sequential()
@@ -104,7 +108,11 @@ class GazeDetector:
         np_data = np.asarray(data)
         categorical_labels = to_categorical(labels)
 
-        self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs)
+        self.training_epochs = num_epochs
+
+        callback = ProgressCallback(self)
+
+        self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=[callback])
 
     def test_accuracy(self, data, labels):
         """
@@ -128,6 +136,15 @@ class GazeDetector:
         percent = count * 1.0 / total
 
         print('Percent correct:', percent)
+
+
+class ProgressCallback(Callback):
+    def __init__(self, detector):
+        Callback.__init__(self)
+        self.detector = detector
+
+    def on_epoch_end(self, epoch, logs=None):
+        self.detector.current_epoch = epoch
 
 
 if __name__ == '__main__':

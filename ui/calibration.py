@@ -144,7 +144,7 @@ class Calibration(QGraphicsView):
         if self.train_at_end:
             text = """
                 <h2>Data gathering complete!</h2>
-                <p>Calibrating...</p>
+                <p>Calibrating ...</p>
             """
             self.textbox.setHtml(text)
 
@@ -164,7 +164,16 @@ class Calibration(QGraphicsView):
             self.close()
             self.parent.set_active_widget(1)
         else:
-            QTimer.singleShot(1000, self.endPostBallMessage)
+            if self.train_at_end:
+                training_pct = int(100 * self.detector.current_epoch / self.detector.training_epochs)
+                text = """
+                    <h2>Data gathering complete!</h2>
+                    <p>Calibrating ... {pct}%</p>
+                """.format(pct=training_pct)
+
+                self.textbox.setHtml(text)
+
+            QTimer.singleShot(500, self.endPostBallMessage)
 
     def sendData(self):
         data = self.parseData(self.data)
