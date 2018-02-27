@@ -34,6 +34,9 @@ class EightButtonMainMenu(BaseEightButton):
     def push_button_2_onclick(self):
         self.openWindow(5)
 
+    def push_button_3_onclick(self):
+        self.openWindow(6)
+
     def push_button_5_onclick(self):
         self.openWindow(4)
 
