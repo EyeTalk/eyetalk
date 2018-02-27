@@ -86,7 +86,7 @@ TEXT_LAYOUTS = {
         '#',
         '$',
         '%',
-        '@',
+        '@'
     ]
 }
 
@@ -98,5 +98,16 @@ GREETINGS = [
     "Goodnight",
     "Goodbye",
     "I'm\ndoing well",
-    "I'm not\ndoing well",
+    "I'm not\ndoing well"
+]
+
+FEELINGS = [
+    'UN-\nCOMFORTABLE',
+    'TIRED',
+    'COLD',
+    'HOT',
+    'HAPPY',
+    'SAD',
+    'SICK',
+    'ANNOYED'
 ]
