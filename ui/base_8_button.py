@@ -1,4 +1,5 @@
-from numpy import argmax
+import numpy as np
+from queue import deque
 
 from PyQt5.QtWidgets import QDesktopWidget, QMainWindow, QWidget, QPushButton
 from PyQt5.QtCore import Qt, QMetaObject, QTimer
@@ -33,6 +34,7 @@ class BaseEightButton(QWidget):
 
         self.text_string = ""
         self.last_id = -1
+        self.sample_queue = deque(maxlen=6)
 
         self.setupUi()
 
@@ -40,11 +42,18 @@ class BaseEightButton(QWidget):
         self.is_active = True
         self.timer.start(10)
 
+    def get_average_label(self):
+        all_data = np.concatenate(tuple(self.sample_queue), axis=0)
+        averages = np.average(all_data, 0)
+        return np.argmax(averages)
+
     def check_gaze(self):
         given_id, probabilities = self.detector.sample()
-        label = argmax(probabilities)
 
         if given_id != self.last_id:
+            self.sample_queue.appendleft(probabilities)
+            label = self.get_average_label()
+
             self.last_id = given_id
             self.show_gazed_button(label)
 

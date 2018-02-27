@@ -2,6 +2,7 @@ from ui.base_8_button import BaseEightButton
 from ui.keyboard_constants import *
 from ui.word_recommendations.recommendations import RecommendationSystem
 
+
 class EightButtonKeyboard(BaseEightButton):
 
     def __init__(self, parent, detector):
