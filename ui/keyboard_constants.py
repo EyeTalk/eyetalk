@@ -1,17 +1,22 @@
 BASE = 'BASE'
-PREDICTED = 'PREDICTED'
-NUMBERS = 'Numbers or Symbols'
-ABC = 'A B C D E F G\nSpace'
-HIJ = 'H I J K L M N\nBackspace'
-OPQ = 'O P Q R S T U\nCaps'
-VWX = 'V W X Y Z\n. ? !'
-EXIT = 'Exit'
-MAINMENU = 'Main Menu'
-CLEAR = 'Clear'
-CONFIRM = 'Confirm'
-SPACE = 'Space'
-BACKSPACE = 'Backspace'
-CAPS = 'Toggle Caps'
+PREDICTED = 'NO\nPREDICTED\nWORD'
+NUMBERS = 'Numbers\nand\nSymbols'
+ABC = 'A B C D\nE F G\nSpace'
+HIJ = 'H I J K \nL M N\nBackspace'
+OPQ = 'O P Q R\nS T U\nCaps'
+VWX = 'V W X Y\nZ . ? !'
+EXIT = 'EXIT'
+BACK = 'BACK'
+MAINMENU = 'MAIN MENU'
+CLEAR = 'CLEAR'
+CONFIRM = 'CONFIRM'
+SPACE = 'SPACE'
+BACKSPACE = 'BACKSPACE'
+CAPS = 'TOGGLE CAPS'
+YES = 'YES'
+NO = 'NO'
+OUTSIDE = 'OUTSIDE'
+HOME = 'HOME'
 
 
 TEXT_LAYOUTS = {
@@ -64,5 +69,47 @@ TEXT_LAYOUTS = {
         '.',
         '?',
         '!'
+    ],
+    5: [
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        'MORE->'
+    ],
+    6: [
+        '<-BACK',
+        '7',
+        '8',
+        '9',
+        '#',
+        '$',
+        '%',
+        '@'
     ]
 }
+
+GREETINGS = [
+    "Hello,\nhow are you?",
+    "Good to\nsee you",
+    "Good\nmorning",
+    "Good\nafternoon",
+    "Goodnight",
+    "Goodbye",
+    "I'm\ndoing well",
+    "I'm not\ndoing well"
+]
+
+FEELINGS = [
+    'UN-\nCOMFORTABLE',
+    'TIRED',
+    'COLD',
+    'HOT',
+    'HAPPY',
+    'SAD',
+    'SICK',
+    'ANNOYED'
+]

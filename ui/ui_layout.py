@@ -7,9 +7,11 @@ def build_layout_dictionary(screen_width, screen_height):
 
     border = screen_pt * 0.05
     circle_button_diameter = screen_width * 0.1875
+    circle_2_button_diameter = screen_width * 0.4
     box_button_size = screen_pt * 0.2
     button_border_width = screen_height / 500
     circle_border_radius = circle_button_diameter / 2
+    circle_border_radius_2 = circle_2_button_diameter / 2
 
     circle_stylesheet = "QPushButton{\n" \
                         "background-color:qlineargradient" \
@@ -18,6 +20,19 @@ def build_layout_dictionary(screen_width, screen_height):
                         "border-color: black;\n" \
                         "border-width: " + str(button_border_width) + "px;\n" \
                         "border-radius: " + str(circle_border_radius) + "px;\n" \
+                        "font-size: 30pt;\n" \
+                        "font-weight: bold;\n" \
+                        "}"
+
+    big_circle_stylesheet = "QPushButton{\n" \
+                        "background-color:qlineargradient" \
+                        "(x1: 0, y1: 0, x2: 0, y2: 2, stop: 0 white, stop: 1 grey);\n" \
+                        "border-style: solid;\n" \
+                        "border-color: black;\n" \
+                        "border-width: " + str(button_border_width) + "px;\n" \
+                        "border-radius: " + str(circle_border_radius_2) + "px;\n" \
+                        "font-size: 30pt;\n" \
+                        "font-weight: bold;\n" \
                         "}"
 
     box_stylesheet = "QPushButton{\n" \
@@ -25,11 +40,15 @@ def build_layout_dictionary(screen_width, screen_height):
                      "border-color: black;\n" \
                      "border-width: " + str(button_border_width) + "px;\n" \
                      "border-radius: 0px;\n" \
+                     "font-size: 30pt;\n" \
+                     "font-weight: bold;\n" \
                      "}"
 
     label_stylesheet = "QLabel{\n" \
                      "background-color: white;\n" \
                      "qproperty-alignment: AlignCenter;\n" \
+                     "font-size: 30pt;\n" \
+                     "font-weight: bold;\n" \
                      "}"
 
 
@@ -38,9 +57,24 @@ def build_layout_dictionary(screen_width, screen_height):
         'height': screen_height,
         'border': border,
         'circle_stylesheet': circle_stylesheet,
+        'big_circle_stylesheet': big_circle_stylesheet,
         'box_stylesheet': box_stylesheet,
         'label_stylesheet': label_stylesheet,
         'elements': {
+            'pushButton_1_big': {
+                'top_left_x': border.x(),
+                'top_left_y': screen_height - (border.y() + circle_2_button_diameter),
+                'width': circle_2_button_diameter,
+                'height': circle_2_button_diameter,
+                'label': 1
+            },
+            'pushButton_2_big': {
+                'top_left_x': screen_width - (border.x() + circle_2_button_diameter),
+                'top_left_y': screen_height - (border.y() + circle_2_button_diameter),
+                'width': circle_2_button_diameter,
+                'height': circle_2_button_diameter,
+                'label': 1
+            },
             'pushButton_1': {
                 'top_left_x': border.x(),
                 'top_left_y': screen_height - 2 * (border.y() + circle_button_diameter),
@@ -132,7 +166,11 @@ def build_layout_element(parent, layout, element_name):
         button.setGeometry(QRect(elem_layout['top_left_x'], elem_layout['top_left_y'],
                                  elem_layout['width'], elem_layout['height']))
 
-        stylesheet = layout['circle_stylesheet'] if element_name.startswith('pushButton') else layout['box_stylesheet']
+        if 'big' in element_name:
+            stylesheet = layout['big_circle_stylesheet'] if element_name.startswith('pushButton') else layout[
+                'box_stylesheet']
+        else:
+            stylesheet = layout['circle_stylesheet'] if element_name.startswith('pushButton') else layout['box_stylesheet']
         button.setStyleSheet(stylesheet)
 
         button.setObjectName(element_name)

@@ -1,3 +1,4 @@
+from threading import Thread
 from pymongo import MongoClient
 from PyQt5.QtWidgets import (QGraphicsView,
         QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
@@ -5,7 +6,8 @@ from PyQt5.QtGui import QPainter, QPixmap
 from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 from ui.ui_layout import build_layout_dictionary
 
-EACH_BUTTON_TIME = 550
+
+EACH_BUTTON_TIME = 1500
 
 
 class Ball(QObject):
@@ -26,11 +28,17 @@ class Calibration(QGraphicsView):
 
         self.parent = parent
         self.detector = detector
+
+        self.is_active = False
         self.initView()
         self.data = []
         self.current_label = -1
 
         self.train_at_end = calibrate_now
+
+    def set_active(self):
+        self.is_active = True
+        self.initPreBallMessage()
 
     def initView(self):
         self.showFullScreen()
@@ -41,8 +49,6 @@ class Calibration(QGraphicsView):
 
         self.setWindowTitle("Calibration")
         self.setRenderHint(QPainter.Antialiasing)
-
-        self.initPreBallMessage()
 
 
     def initPreBallMessage(self):
@@ -138,10 +144,12 @@ class Calibration(QGraphicsView):
         if self.train_at_end:
             text = """
                 <h2>Data gathering complete!</h2>
-                <p>Calibrating...</p>
+                <p>Calibrating ...</p>
             """
             self.textbox.setHtml(text)
-            self.train_machine_learning()
+
+            thread = Thread(target=self.train_machine_learning)
+            thread.start()
 
         else:
             text = """
@@ -154,9 +162,18 @@ class Calibration(QGraphicsView):
     def endPostBallMessage(self):
         if self.finished_calibration:
             self.close()
-            self.parent.stacked_widget.setCurrentIndex(1)
+            self.parent.set_active_widget(1)
         else:
-            QTimer.singleShot(1000, self.endPostBallMessage)
+            if self.train_at_end:
+                training_pct = int(100 * self.detector.current_epoch / self.detector.training_epochs)
+                text = """
+                    <h2>Data gathering complete!</h2>
+                    <p>Calibrating ... {pct}%</p>
+                """.format(pct=training_pct)
+
+                self.textbox.setHtml(text)
+
+            QTimer.singleShot(500, self.endPostBallMessage)
 
     def sendData(self):
         data = self.parseData(self.data)
@@ -191,7 +208,20 @@ class Calibration(QGraphicsView):
         return final_data
 
     def train_machine_learning(self):
-        # TODO: do ML training here
+        filtered_data = self.parseData(self.data)
+        training_data = []
+        training_labels = []
+
+        for x, y in filtered_data:
+            x_vector = self.detector.extract_used_features(x)
+            training_data.append(x_vector)
+            training_labels.append(y)
+
+        self.detector.train_location_classifier(training_data, training_labels)
+        self.finished_calibration = True
+
+        self.detector.test_accuracy(training_data, training_labels)
+
         self.finished_calibration = True
 
     def sample_features(self):
