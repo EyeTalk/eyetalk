@@ -26,7 +26,7 @@ class EightButtonFeeling(BaseEightButton):
         self.pushButton_6.setText(FEELINGS[5])
         self.pushButton_7.setText(FEELINGS[6])
         self.pushButton_8.setText(FEELINGS[7])
-        self.topLeftButton.setText(BACK)
+        self.topLeftButton.setText(MAINMENU)
 
     def push_button_1_onclick(self):
         self.set_text_label(FEELINGS[0])

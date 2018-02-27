@@ -26,7 +26,7 @@ class EightButtonGreeting(BaseEightButton):
         self.pushButton_6.setText(GREETINGS[5])
         self.pushButton_7.setText(GREETINGS[6])
         self.pushButton_8.setText(GREETINGS[7])
-        self.topLeftButton.setText(BACK)
+        self.topLeftButton.setText(MAINMENU)
 
     def push_button_1_onclick(self):
         self.set_text_label(GREETINGS[0])
