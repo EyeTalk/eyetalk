@@ -80,7 +80,7 @@ class Calibration(QGraphicsView):
         self.ball_height = self.ball.pixmap_item.boundingRect().size().height()
 
         layout = build_layout_dictionary(self.screen_width,self.screen_height)
-        elements = layout['elements']
+        elements = layout['eight_button_elements']
 
         self.pos = -1
         element_items = elements.items()
@@ -184,7 +184,7 @@ class Calibration(QGraphicsView):
         for x,y in data:
             db.Test.insert_one(
                 {"x":x[0],
-                 "y":y[0]
+                 "y":y
                  }
             )
         #data_to_send = [{'x': x, 'y': y} for x, y in data]

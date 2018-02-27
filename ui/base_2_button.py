@@ -55,11 +55,11 @@ class BaseTwoButton(QWidget):
         layout_dict = build_layout_dictionary(sg.width(), sg.height())
 
         # Create and place objects
-        self.pushButton_1 = build_layout_element(self, layout_dict, 'pushButton_1_big')
-        self.pushButton_2 = build_layout_element(self, layout_dict, 'pushButton_2_big')
-        self.topLeftButton = build_layout_element(self, layout_dict, 'topLeftButton')
-        self.topRightButton = build_layout_element(self, layout_dict, 'topRightButton')
-        self.textLabel = build_layout_element(self, layout_dict, 'textLabel')
+        self.pushButton_1 = build_layout_element(self, layout_dict, 'pushButton_1_big', 2)
+        self.pushButton_2 = build_layout_element(self, layout_dict, 'pushButton_2_big', 2)
+        self.topLeftButton = build_layout_element(self, layout_dict, 'topLeftButton', 2)
+        self.topRightButton = build_layout_element(self, layout_dict, 'topRightButton', 2)
+        self.textLabel = build_layout_element(self, layout_dict, 'textLabel', 2)
 
         QMetaObject.connectSlotsByName(self)
 
