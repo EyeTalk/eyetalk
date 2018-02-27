@@ -66,7 +66,6 @@ class EightButtonKeyboard(BaseEightButton):
             self.pushButton_2.setEnabled(True)
             self.pushButton_3.setEnabled(True)
 
-
         self.pushButton_1.setText(self.text_1)
         self.pushButton_2.setText(self.text_2)
         self.pushButton_3.setText(self.text_3)
@@ -111,6 +110,8 @@ class EightButtonKeyboard(BaseEightButton):
         if self.current_keyboard_screen == 0:
             self.add_predicted(self.text_1 + ' ')
             self.load_keyboard_screen(0)
+        elif self.current_keyboard_screen == 6:
+            self.load_keyboard_screen(5)
         else:
             self.add_character(self.text_1)
             self.load_keyboard_screen(0)
@@ -133,7 +134,7 @@ class EightButtonKeyboard(BaseEightButton):
 
     def push_button_4_onclick(self):
         if self.current_keyboard_screen == 0:
-            self.load_keyboard_screen(1)
+            self.load_keyboard_screen(5)
         else:
             self.add_character(self.text_4)
             self.load_keyboard_screen(0)
@@ -168,6 +169,8 @@ class EightButtonKeyboard(BaseEightButton):
         elif self.current_keyboard_screen == 2:
             self.delete_last_char()
             self.load_keyboard_screen(0)
+        elif self.current_keyboard_screen == 5:
+            self.load_keyboard_screen(6)
         else:
             self.add_character(self.text_8)
             self.load_keyboard_screen(0)
@@ -182,7 +185,10 @@ class EightButtonKeyboard(BaseEightButton):
                 self.clear_all()
                 self.goBack()
         else:
-            self.topLeftButton.setText(MAINMENU)
+            if self.label_text:
+                self.topLeftButton.setText(CLEAR)
+            else:
+                self.topLeftButton.setText(MAINMENU)
             self.load_keyboard_screen(0)
 
     def top_right_button_onclick(self):
