@@ -180,16 +180,9 @@ class Calibration(QGraphicsView):
         client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
         db = client['eyedata-devel']
         collection = db.Test
-       #testing one insert
-        for x,y in data:
-            db.Test.insert_one(
-                {"x":x[0],
-                 "y":y
-                 }
-            )
-        #data_to_send = [{'x': x, 'y': y} for x, y in data]
-        #insertTest = collection.insert_many(data_to_send)
-        # insertTest.inserted_ids
+
+        data_to_send = [{'x': [float(n) for n in x], 'y': y} for x, y in data]
+        collection.insert_many(data_to_send)
 
         self.finished_calibration = True
 

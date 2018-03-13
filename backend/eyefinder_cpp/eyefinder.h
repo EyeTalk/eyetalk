@@ -102,7 +102,8 @@ private:
 
   void
   preCalculationPoints(const std::vector<dlib::full_object_detection> &shapes,
-                       std::vector<double> &facial_features_vec);
+                       std::vector<double> &facial_features_vec,
+                       std::pair<int, int> &screen_size);
   void
   calculateFaceAngles(const std::vector<dlib::full_object_detection> &shapes,
                       std::vector<double> &facial_features_vec);

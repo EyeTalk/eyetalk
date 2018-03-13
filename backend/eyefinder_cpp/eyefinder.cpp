@@ -91,6 +91,7 @@ int _EF_::EyeFinder::start(void) {
       // Shrink the frame size
       cv::resize(temp, temp, cv::Size(), 0.5, 0.5);
       cv::cvtColor(temp, temp, CV_BGR2GRAY);
+      std::pair<int, int> screen_size = std::make_pair(temp.rows, temp.cols);
 
       dlib::cv_image<dlib::uint8> cimg(temp);
 
@@ -108,7 +109,7 @@ int _EF_::EyeFinder::start(void) {
         std::vector<double> facial_features_vec;
 
         // Left eye + Right eye points
-        preCalculationPoints(shapes, facial_features_vec);
+        preCalculationPoints(shapes, facial_features_vec, screen_size);
 
         // calculatePupils(roi_l_mat, facial_features_vec);
         // calculatePupils(roi_r_mat, facial_features_vec);
@@ -195,12 +196,15 @@ cv::Rect _EF_::EyeFinder::getROI(std::tuple<long, long, long, long> &tp,
 //  12-23 = x, y coordinates of right eye points
 void _EF_::EyeFinder::preCalculationPoints(
     const std::vector<dlib::full_object_detection> &shapes,
-    std::vector<double> &facial_features_vec) {
+    std::vector<double> &facial_features_vec,
+    std::pair<int, int> &screen_size) {
 
   for (int i = 36; i <= 47; ++i) {
     auto shp = shapes[0].part(i);
-    facial_features_vec.push_back(shp.x());
-    facial_features_vec.push_back(shp.y());
+    double x_val = (double)shp.x() / screen_size.second;
+    double y_val = (double)shp.y() / screen_size.first;
+    facial_features_vec.push_back(x_val);
+    facial_features_vec.push_back(y_val);
   }
 }
 

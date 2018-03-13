@@ -7,7 +7,7 @@ from keras.layers import Dense
 from keras.models import Sequential
 from keras.optimizers import SGD
 from keras.utils.np_utils import to_categorical
-from keras.callbacks import Callback
+from keras.callbacks import Callback, ReduceLROnPlateau
 
 from backend.ipc_reader import IPCReader
 
@@ -110,9 +110,11 @@ class GazeDetector:
 
         self.training_epochs = num_epochs
 
-        callback = ProgressCallback(self)
+        progress_callback = ProgressCallback(self)
+        lr_callback = ReduceLROnPlateau(patience=5)
+        callbacks = [progress_callback, lr_callback]
 
-        self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=[callback])
+        self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=callbacks)
 
     def test_accuracy(self, data, labels):
         """
@@ -132,7 +134,6 @@ class GazeDetector:
             count += int(predicted_label == test_label)
             total += 1
 
-        # print(count, total)
         percent = count * 1.0 / total
 
         print('Percent correct:', percent)
