@@ -13,7 +13,7 @@ from backend.ipc_reader import IPCReader
 
 
 class GazeDetector:
-    BLINK_THRESHOLD = 0.3
+    BLINK_THRESHOLD = 0.4
 
     def __init__(self, external_camera=False):
 
@@ -82,6 +82,8 @@ class GazeDetector:
 
         ratio_top = np.linalg.norm(eye_points[1] - eye_points[5]) + np.linalg.norm(eye_points[2] - eye_points[4])
         ratio_bottom = np.linalg.norm(eye_points[0] - eye_points[3]) * 2.0
+
+        print(ratio_top / ratio_bottom)
 
         return ratio_top / ratio_bottom
 

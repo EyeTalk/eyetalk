@@ -4,7 +4,7 @@ from queue import deque
 
 class EyeStateManager:
     SAMPLES_AVERAGED = 6
-    BLINK_THRESHOLD = 2
+    BLINK_THRESHOLD = 3
     CHANGE_THRESHOLD = 3
 
     def __init__(self, choose_label_callback=np.argmax):
