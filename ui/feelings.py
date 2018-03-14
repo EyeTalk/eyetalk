@@ -1,6 +1,7 @@
 from ui.base_8_button import BaseEightButton
 from ui.keyboard_constants import *
 
+
 class EightButtonFeeling(BaseEightButton):
     def __init__(self, parent, detector):
         BaseEightButton.__init__(self, parent, detector)
@@ -10,11 +11,11 @@ class EightButtonFeeling(BaseEightButton):
         self.set_text_label(self.base_string)
 
     def goBack(self):
-        self.parent.stacked_widget.setCurrentIndex(1)
+        self.go_to_widget(1)
         self.hide()
 
     def openWindow(self, num):
-        self.parent.set_active_widget(num)
+        self.go_to_widget(num)
 
     def set_button_texts(self):
         self.setWindowTitle("EyeTalk")

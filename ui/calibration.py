@@ -103,6 +103,7 @@ class Calibration(QGraphicsView):
 
         total_timeout = EACH_BUTTON_TIME * len(self.button_positions) * 2
         QTimer.singleShot(total_timeout, self.endBallAnimation)
+        self.move_ball()
 
     def move_ball(self):
         self.pos = (self.pos + 1) % len(self.button_positions)

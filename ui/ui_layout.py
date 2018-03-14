@@ -144,7 +144,7 @@ def build_layout_dictionary(screen_width, screen_height):
             'top_left_y': screen_height - (border.y() + circle_2_button_diameter),
             'width': circle_2_button_diameter,
             'height': circle_2_button_diameter,
-            'label': 5
+            'label': 2
         },
         'topLeftButton': {
             'top_left_x': 0,

@@ -13,8 +13,7 @@ from backend.ipc_reader import IPCReader
 
 
 class GazeDetector:
-    LEFT_EYE = 0
-    RIGHT_EYE = 1
+    BLINK_THRESHOLD = 0.3
 
     def __init__(self, external_camera=False):
 
@@ -31,6 +30,7 @@ class GazeDetector:
 
         self.last_id_seen = -1
         self.last_probabilities = None
+        self.last_blink = False
 
         self.training_epochs = 0
         self.current_epoch = 0
@@ -58,13 +58,32 @@ class GazeDetector:
             self.last_id_seen = feature_id
 
             used_features = self.extract_used_features(features)
+            blinking = self.detect_blink(features)
+            self.last_blink = blinking
             probabilities = self.calculate_location_probabilities_from_features(used_features)
             self.last_probabilities = probabilities
 
         else:
+            blinking = self.last_blink
             probabilities = self.last_probabilities
 
-        return feature_id, probabilities
+        return feature_id, blinking, probabilities
+
+    def detect_blink(self, features):
+        left_eye_aspect_ratio = self.calculate_eye_ratio(features[1:13])
+        right_eye_aspect_ratio = self.calculate_eye_ratio(features[13:25])
+
+        average_ratio = (left_eye_aspect_ratio + right_eye_aspect_ratio) / 2
+        return average_ratio < self.BLINK_THRESHOLD
+
+    @staticmethod
+    def calculate_eye_ratio(eye_features):
+        eye_points = [np.asarray([eye_features[2 * i], eye_features[2 * i + 1]]) for i in range(6)]
+
+        ratio_top = np.linalg.norm(eye_points[1] - eye_points[5]) + np.linalg.norm(eye_points[2] - eye_points[4])
+        ratio_bottom = np.linalg.norm(eye_points[0] - eye_points[3]) * 2.0
+
+        return ratio_top / ratio_bottom
 
     def cleanup(self):
         """

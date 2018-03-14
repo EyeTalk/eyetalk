@@ -1,10 +1,8 @@
-import numpy as np
-from queue import deque
-
-from PyQt5.QtWidgets import QDesktopWidget, QMainWindow, QWidget, QPushButton
-from PyQt5.QtCore import Qt, QMetaObject, QTimer
+from PyQt5.QtWidgets import QDesktopWidget, QMainWindow, QWidget
+from PyQt5.QtCore import QMetaObject, QTimer
 
 from ui.ui_layout import build_layout_dictionary, build_layout_element
+from ui.eye_state_manager import EyeStateManager
 
 
 class BaseEightButton(QWidget):
@@ -13,6 +11,7 @@ class BaseEightButton(QWidget):
         QMainWindow.__init__(self)
         self.parent = parent
         self.detector = detector
+        self.eye_state_manager = EyeStateManager()
 
         self.is_active = False
         self.timer = QTimer()
@@ -30,35 +29,38 @@ class BaseEightButton(QWidget):
         self.topRightButton = None
         self.textLabel = None
 
+        # TODO: Implement function to map probabilities to button
+
         self.layout_dict = None
 
         self.text_string = ""
-        self.last_id = -1
-        self.sample_queue = deque(maxlen=6)
 
         self.setupUi()
 
     def set_active(self):
         self.is_active = True
-        self.timer.start(10)
 
-    def get_average_label(self):
-        all_data = np.concatenate(tuple(self.sample_queue), axis=0)
-        averages = np.average(all_data, 0)
-        return np.argmax(averages)
+        def start_timer():
+            self.timer.start(10)
+
+        QTimer.singleShot(1500, start_timer)
+        self.eye_state_manager = EyeStateManager()
 
     def check_gaze(self):
-        given_id, probabilities = self.detector.sample()
+        given_id, blink, probabilities = self.detector.sample()
 
-        if given_id != self.last_id:
-            self.sample_queue.appendleft(probabilities)
-            label = self.get_average_label()
+        self.eye_state_manager.handle_input(given_id, blink, probabilities)
 
-            self.last_id = given_id
-            self.show_gazed_button(label)
+        if self.eye_state_manager.selection_made:
+            self.push_button(self.eye_state_manager.selected_label)
+            # TODO: Add noise here?
+            print('hit')
+        elif self.eye_state_manager.new_gazed_button:
+            self.show_gazed_button(self.eye_state_manager.selected_label)
 
     def go_to_widget(self, widget_number):
         self.timer.stop()
+        self.show_gazed_button(-1)
         self.parent.set_active_widget(widget_number)
 
     def setupUi(self):
@@ -124,6 +126,23 @@ class BaseEightButton(QWidget):
         self.topLeftButton.setStyleSheet(self.get_gazed_button_stylesheet('topLeftButton', button_id))
         self.topRightButton.setStyleSheet(self.get_gazed_button_stylesheet('topRightButton', button_id))
 
+    def push_button(self, button):
+        callbacks = {
+            1: self.push_button_1_onclick,
+            2: self.push_button_2_onclick,
+            3: self.push_button_3_onclick,
+            4: self.push_button_4_onclick,
+            5: self.push_button_5_onclick,
+            6: self.push_button_6_onclick,
+            7: self.push_button_7_onclick,
+            8: self.push_button_8_onclick,
+            9: self.top_left_button_onclick,
+            10: self.top_right_button_onclick
+        }
+
+        button_function = callbacks.get(button, None)
+        if button_function is not None:
+            button_function()
 
     """
     Simply override any of these methods in a subclass to implement a click handler

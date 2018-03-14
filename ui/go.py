@@ -10,11 +10,11 @@ class TwoButtonGo(BaseTwoButton):
         self.set_text_label(self.base_string)
 
     def goBack(self):
-        self.parent.stacked_widget.setCurrentIndex(1)
+        self.go_to_widget(1)
         self.hide()
 
     def openWindow(self, num):
-        self.parent.set_active_widget(num)
+        self.go_to_widget(num)
 
     def set_button_texts(self):
         self.pushButton_1.setText(OUTSIDE)

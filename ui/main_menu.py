@@ -14,7 +14,7 @@ class EightButtonMainMenu(BaseEightButton):
         self.parent.close()
 
     def openWindow(self, num):
-        self.parent.set_active_widget(num)
+        self.go_to_widget(num)
 
     def set_button_texts(self):
         self.setWindowTitle("EyeTalk")

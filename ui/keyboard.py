@@ -29,12 +29,12 @@ class EightButtonKeyboard(BaseEightButton):
         self.load_keyboard_screen(0)
 
     def goBack(self):
-        self.parent.stacked_widget.setCurrentIndex(1)
+        self.go_to_widget(1)
         self.hide()
 
     def openWindow(self, num):
         self.hide()
-        self.parent.stacked_widget.setCurrentIndex(num)
+        self.go_to_widget(num)
 
     def load_keyboard_screen(self, keyboard_index):
         layout = TEXT_LAYOUTS[keyboard_index]
