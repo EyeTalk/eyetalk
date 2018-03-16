@@ -13,7 +13,7 @@ from backend.ipc_reader import IPCReader
 
 
 class GazeDetector:
-    BLINK_THRESHOLD = 0.4
+    DEFAULT_BLINK_THRESHOLD = 0.35
 
     def __init__(self, external_camera=False):
 
@@ -34,6 +34,7 @@ class GazeDetector:
 
         self.training_epochs = 0
         self.current_epoch = 0
+        self.blink_threshold = self.DEFAULT_BLINK_THRESHOLD
 
     def init_model(self):
         model = Sequential()
@@ -74,7 +75,7 @@ class GazeDetector:
         right_eye_aspect_ratio = self.calculate_eye_ratio(features[13:25])
 
         average_ratio = (left_eye_aspect_ratio + right_eye_aspect_ratio) / 2
-        return average_ratio < self.BLINK_THRESHOLD
+        return average_ratio < self.blink_threshold
 
     @staticmethod
     def calculate_eye_ratio(eye_features):
@@ -83,9 +84,10 @@ class GazeDetector:
         ratio_top = np.linalg.norm(eye_points[1] - eye_points[5]) + np.linalg.norm(eye_points[2] - eye_points[4])
         ratio_bottom = np.linalg.norm(eye_points[0] - eye_points[3]) * 2.0
 
-        print(ratio_top / ratio_bottom)
-
         return ratio_top / ratio_bottom
+
+    def set_new_blink_threshold(self, baseline_eye_ratio):
+        self.blink_threshold = baseline_eye_ratio * 0.85
 
     def cleanup(self):
         """
@@ -132,7 +134,7 @@ class GazeDetector:
         self.training_epochs = num_epochs
 
         progress_callback = ProgressCallback(self)
-        lr_callback = ReduceLROnPlateau(patience=5)
+        lr_callback = ReduceLROnPlateau(patience=8, monitor='loss')
         callbacks = [progress_callback, lr_callback]
 
         self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=callbacks)

@@ -211,6 +211,14 @@ class Calibration(QGraphicsView):
             training_data.append(x_vector)
             training_labels.append(y)
 
+        left_eye_ratios = [self.detector.calculate_eye_ratio(features[0][1:13]) for features in filtered_data]
+        twenty_pct = len(left_eye_ratios) // 5
+        left_eye_ratios = sorted(left_eye_ratios)[twenty_pct: -twenty_pct]
+        right_eye_ratios = [self.detector.calculate_eye_ratio(features[0][13:25]) for features in filtered_data]
+        right_eye_ratios = sorted(right_eye_ratios)[twenty_pct: -twenty_pct]
+        baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
+        self.detector.set_new_blink_threshold(baseline_eye_ratio)
+
         self.detector.train_location_classifier(training_data, training_labels)
         self.finished_calibration = True
 

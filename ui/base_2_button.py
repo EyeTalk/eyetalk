@@ -34,7 +34,7 @@ class BaseTwoButton(QWidget):
         def start_timer():
             self.timer.start(10)
 
-        QTimer.singleShot(1500, start_timer)
+        QTimer.singleShot(500, start_timer)
         self.eye_state_manager = EyeStateManager(self.select_label_from_probabilities)
 
     def check_gaze(self):

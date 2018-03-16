@@ -1,5 +1,6 @@
-from ui.base_8_button import BaseEightButton
 import pyglet
+from ui.base_8_button import BaseEightButton
+
 
 class EightButtonMainMenu(BaseEightButton):
     def __init__(self, parent, detector):
