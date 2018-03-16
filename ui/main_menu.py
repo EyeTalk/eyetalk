@@ -1,5 +1,5 @@
 from ui.base_8_button import BaseEightButton
-
+import pyglet
 
 class EightButtonMainMenu(BaseEightButton):
     def __init__(self, parent, detector):
@@ -36,6 +36,10 @@ class EightButtonMainMenu(BaseEightButton):
 
     def push_button_3_onclick(self):
         self.openWindow(6)
+
+    def push_button_4_onclick(self):
+        bell = pyglet.media.load("ui/sounds/bell.mp3", streaming=False)
+        bell.play()
 
     def push_button_5_onclick(self):
         self.openWindow(4)
