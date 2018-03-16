@@ -180,12 +180,14 @@ class Calibration(QGraphicsView):
         data = self.parseData(self.data)
         client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
         db = client['eyedata-devel']
-        collection = db.Test
+        collection = db.Frames
 
         data_to_send = [{'x': [float(n) for n in x], 'y': y} for x, y in data]
         collection.insert_many(data_to_send)
 
         self.finished_calibration = True
+        self.close()
+        self.parent.close()
 
     def parseData(self, inputData):
         final_data = []
