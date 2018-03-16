@@ -8,7 +8,7 @@
 PUBLIC
 */
 
-_EF_::EyeFinder::EyeFinder(void) : cap(0), abs_ffv{} {
+_EF_::EyeFinder::EyeFinder(void) : cap(0), abs_ffv{}, rois{} {
   // set the buffersize of cv::VideoCapture -> cap
   cap.set(CV_CAP_PROP_BUFFERSIZE, 3);
 
@@ -123,6 +123,7 @@ int _EF_::EyeFinder::start(void) {
         // TODO.. Need to clear abs_ffv if bad Pupils
         //     Need to use ROI and pupils
         // Pseudo: if (chkisbad) {abs_ffv.clear(); continue;}
+        if (ischkbad()) {abs_ffv.clear(); continue;}
 
         // Write out the Facial Features
         writeFacialFeaturesToShm(facial_features_vec);
@@ -154,6 +155,51 @@ int _EF_::EyeFinder::start(void) {
 /*
 PRIVATE
 */
+
+// *****
+// ischkbad
+bool _EF_::EyeFinder::ischkbad(void) {
+  using XY = std::pair<double,double>;
+
+  cv::Rect l_eye_roi = rois[0], r_eye_roi = rois[1];
+  double l_pupil_x = abs_ffv[24], l_pupil_y = abs_ffv[25];
+  double r_pupil_x = abs_ffv[26], r_pupil_y = abs_ffv[27];
+
+  auto mmfinder = [this](int l, int r, int step = 2) -> std::pair<XY, XY> {
+    XY min_xy = {abs_ffv[l], abs_ffv[l + 1]};
+    XY max_xy = min_xy;
+    int i;
+    for (i = l; i < r; i += step) {
+      min_xy.first = std::min(min_xy.first, abs_ffv[i]);
+      min_xy.second = std::min(min_xy.second, abs_ffv[i + 1]);
+      max_xy.first = std::max(max_xy.first, abs_ffv[i]);
+      max_xy.second = std::max(max_xy.second, abs_ffv[i + 1]);
+    }
+    return {min_xy, max_xy};
+  };
+  std::pair<XY, XY> l_eye = mmfinder(0, 11);
+  std::pair<XY, XY> r_eye = mmfinder(12, 23);
+
+  double l_pupil_x_loc = l_pupil_x + l_eye_roi.x, l_pupil_y_loc = l_pupil_y + l_eye_roi.y;
+  double r_pupil_x_loc = r_pupil_x + r_eye_roi.x, r_pupil_y_loc = r_pupil_y + r_eye_roi.y;
+  //
+  // return l_pupil_x_loc >= l_eye.first.first
+  // && l_pupil_x_loc <= l_eye.second.first
+  // && l_pupil_y_loc >= l_eye.first.second
+  // && l_pupil_y_loc <= l_eye.second.second
+  //
+  // && r_pupil_x_loc >= r_eye.first.first
+  // && r_pupil_x_loc <= r_eye.second.first
+  // && r_pupil_y_loc >= r_eye.first.second
+  // && r_pupil_y_loc <= r_eye.second.second;
+
+  // Debug
+  // std::cout << "l_pupil_x/y_loc  " << l_pupil_x_loc << " " << l_pupil_y_loc << std::endl;
+  // std::cout << "r_pupil_x/y_loc  " << r_pupil_x_loc << " " << r_pupil_y_loc << std::endl;
+  // std::cout << "l_min/max _x     " << l_eye.first.first << " " << l_eye.second.first << std::endl;
+  // std::cout << "r_min/max _x     " << r_eye.first.first << " " << r_eye.second.first << std::endl << std::endl;
+  return false; // Temporary
+}
 
 // *****
 // setMinAndMax
@@ -276,6 +322,8 @@ void _EF_::EyeFinder::calculatePupilsEL(
   cv::Rect roi_l = EyeFinder::getROI(l_tp, temp);
   cv::Rect roi_r = EyeFinder::getROI(r_tp, temp);
   cv::Rect roi_face = EyeFinder::getROI(face_tp, temp);
+  this->rois.push_back(roi_l);
+  this->rois.push_back(roi_r);
 
   // Display eye tracking on the screen
   cv::Mat roi_l_mat, roi_r_mat, roi_face_mat, roi_l_mat_acc, roi_r_mat_acc;

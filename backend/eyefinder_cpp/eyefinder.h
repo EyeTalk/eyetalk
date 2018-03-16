@@ -93,6 +93,7 @@ private:
   const unsigned int shared_size = sizeof(double) + 30 * sizeof(double);
 
   std::vector<double> abs_ffv;
+  std::vector<cv::Rect> rois; // left eye, right eye
 
   // std::vector<double> facial_features_vec;
   // change to python list later with boost, look below in start()
@@ -100,6 +101,7 @@ private:
   std::tuple<long, long, long, long>
   setMinAndMax(int start, int end,
                const std::vector<dlib::full_object_detection> &shapes);
+  bool ischkbad(void);
   cv::Rect getROI(std::tuple<long, long, long, long> &tp, cv::Mat frame);
 
   void
