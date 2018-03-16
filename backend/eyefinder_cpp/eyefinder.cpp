@@ -8,7 +8,7 @@
 PUBLIC
 */
 
-_EF_::EyeFinder::EyeFinder(void) : cap(0) {
+_EF_::EyeFinder::EyeFinder(void) : cap(0), abs_ffv{} {
   // set the buffersize of cv::VideoCapture -> cap
   cap.set(CV_CAP_PROP_BUFFERSIZE, 3);
 
@@ -119,8 +119,15 @@ int _EF_::EyeFinder::start(void) {
         // Find the face angle + pupils
         calculateFaceAngles(shapes, facial_features_vec);
 
+        // Check Correctness of Pupils.
+        // TODO.. Need to clear abs_ffv if bad Pupils
+        //     Need to use ROI and pupils
+        // Pseudo: if (chkisbad) {abs_ffv.clear(); continue;}
+
         // Write out the Facial Features
         writeFacialFeaturesToShm(facial_features_vec);
+        abs_ffv.clear();
+
       } else {
         writeBadFacialFeaturesToShm(); // or skip it
       }
@@ -205,6 +212,8 @@ void _EF_::EyeFinder::preCalculationPoints(
     double y_val = (double)shp.y() / screen_size.first;
     facial_features_vec.push_back(x_val);
     facial_features_vec.push_back(y_val);
+    abs_ffv.push_back(shp.x());
+    abs_ffv.push_back(shp.y());
   }
 }
 
@@ -245,6 +254,8 @@ void _EF_::EyeFinder::calculateFaceAngles(
   // TODO: handle types for theta and alpha
   facial_features_vec.push_back(theta);
   facial_features_vec.push_back(alpha);
+  abs_ffv.push_back(theta);
+  abs_ffv.push_back(alpha);
 }
 
 // *****
@@ -310,6 +321,10 @@ void _EF_::EyeFinder::calculatePupilsEL(
   facial_features_vec.push_back(left_pupil_y);
   facial_features_vec.push_back(right_pupil_x);
   facial_features_vec.push_back(right_pupil_y);
+  abs_ffv.push_back(leftPupil_acc.x);
+  abs_ffv.push_back(leftPupil_acc.y);
+  abs_ffv.push_back(rightPupil_acc.x);
+  abs_ffv.push_back(rightPupil_acc.y);
 
 #if EF_DEBUG_TB
   int real_leftPupil_x = leftPupil.x + roi_l.x;

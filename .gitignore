@@ -5,3 +5,4 @@ __pycache__/**
 **/build/**
 **/eyefinder_cpp/shape*
 python_dependencies/**
+ui/sounds/temp.*
