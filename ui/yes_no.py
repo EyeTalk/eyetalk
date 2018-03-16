@@ -1,5 +1,6 @@
 from ui.base_2_button import BaseTwoButton
 from ui.keyboard_constants import *
+from ui.tts import *
 
 class TwoButtonYesNo(BaseTwoButton):
     def __init__(self, parent, detector):
@@ -22,10 +23,10 @@ class TwoButtonYesNo(BaseTwoButton):
         self.topLeftButton.setText(MAINMENU)
 
     def push_button_1_onclick(self):
-        self.set_text_label(YES)
+        textToSpeech(YES)
 
     def push_button_2_onclick(self):
-        self.set_text_label(NO)
+        textToSpeech(NO)
 
     def top_left_button_onclick(self):
         self.goBack()

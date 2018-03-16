@@ -1,7 +1,7 @@
 from ui.base_8_button import BaseEightButton
 from ui.keyboard_constants import *
 from ui.word_recommendations.recommendations import RecommendationSystem
-
+from ui.tts import *
 
 class EightButtonKeyboard(BaseEightButton):
 
@@ -193,6 +193,7 @@ class EightButtonKeyboard(BaseEightButton):
             self.load_keyboard_screen(0)
 
     def top_right_button_onclick(self):
-        # GTTS stuff
+        textToSpeech(self.label_text)
         self.clear_all()
+        self.topLeftButton.setText(MAINMENU)
         self.load_keyboard_screen(0)
