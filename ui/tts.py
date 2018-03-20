@@ -1,8 +1,9 @@
 from gtts import gTTS
-import pyglet
+import pygame
 
 def textToSpeech(textStr):
     tts = gTTS(text=textStr, lang='en')
     tts.save("ui/sounds/temp.mp3")
-    music = pyglet.media.load("ui/sounds/temp.mp3", streaming=False)
-    music.play()
+    pygame.init()
+    pygame.mixer.music.load("ui/sounds/temp.mp3")
+    pygame.mixer.music.play()

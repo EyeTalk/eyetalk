@@ -144,6 +144,9 @@ class BaseEightButton(QWidget):
         if button_function is not None:
             button_function()
 
+        self.timer.stop()
+        QTimer.singleShot(500, self.set_active)
+
     """
     Simply override any of these methods in a subclass to implement a click handler
     """

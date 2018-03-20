@@ -98,6 +98,9 @@ class BaseTwoButton(QWidget):
         if button_function is not None:
             button_function()
 
+        self.timer.stop()
+        QTimer.singleShot(500, self.set_active)
+
     def get_gazed_button_stylesheet(self, button_name, gazed_button):
         style_sheet = self.layout_dict['big_circle_stylesheet']
         label = self.layout_dict['eight_button_elements'][button_name]['label']

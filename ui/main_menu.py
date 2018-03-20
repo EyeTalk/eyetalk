@@ -1,4 +1,4 @@
-import pyglet
+import pygame
 from ui.base_8_button import BaseEightButton
 
 
@@ -9,6 +9,8 @@ class EightButtonMainMenu(BaseEightButton):
 
         self.set_button_texts()
         self.set_text_label(self.base_string)
+
+        pygame.init()
 
     def closeApp(self):
         self.close()
@@ -39,8 +41,8 @@ class EightButtonMainMenu(BaseEightButton):
         self.openWindow(6)
 
     def push_button_4_onclick(self):
-        bell = pyglet.media.load("ui/sounds/bell.mp3", streaming=False)
-        bell.play()
+        pygame.mixer.music.load("ui/sounds/bell.mp3")
+        pygame.mixer.music.play()
 
     def push_button_5_onclick(self):
         self.openWindow(4)
