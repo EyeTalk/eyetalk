@@ -10,7 +10,7 @@ PUBLIC
 
 _EF_::EyeFinder::EyeFinder(void) : cap(0), abs_ffv{}, rois{} {
   // set the buffersize of cv::VideoCapture -> cap
-  cap.set(CV_CAP_PROP_BUFFERSIZE, 3);
+  cap.set(38, 3);
 
   // Initialize the Semaphore (POSIX semaphore)
   sem = sem_open(sem_name, O_CREAT | O_EXCL, 0666, 1);
@@ -283,7 +283,7 @@ void _EF_::EyeFinder::calculateFaceAngles(
     float angle = atan(nose_length / std::abs(nose_x_offset));
 
     theta = (90 - angle * (180.0 / M_PI));
-    if (signbit(nose_x_offset))
+    if (std::signbit(nose_x_offset))
       theta *= -1;
 #if EF_DEBUG_FA
     std::cout << "angle: " << angle << std::endl;
@@ -294,7 +294,7 @@ void _EF_::EyeFinder::calculateFaceAngles(
   float vertical_cheek_offset = right_cheek.y() - left_cheek.y();
   float angle = atan(std::abs(vertical_cheek_offset) / face_width);
   float alpha = angle * (180.00 / M_PI);
-  if (signbit(vertical_cheek_offset))
+  if (std::signbit(vertical_cheek_offset))
     alpha *= -1;
 
   // TODO: handle types for theta and alpha
