@@ -98,8 +98,12 @@ class BaseTwoButton(QWidget):
         if button_function is not None:
             button_function()
 
+        def restart_timer():
+            if self.is_active:
+                self.set_active()
+
         self.timer.stop()
-        QTimer.singleShot(500, self.set_active)
+        QTimer.singleShot(500, restart_timer)
 
     def get_gazed_button_stylesheet(self, button_name, gazed_button):
         style_sheet = self.layout_dict['big_circle_stylesheet']

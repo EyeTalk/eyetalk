@@ -60,6 +60,7 @@ class BaseEightButton(QWidget):
 
     def go_to_widget(self, widget_number):
         self.timer.stop()
+        self.is_active = False
         self.show_gazed_button(-1)
         self.parent.set_active_widget(widget_number)
 
@@ -144,8 +145,12 @@ class BaseEightButton(QWidget):
         if button_function is not None:
             button_function()
 
+        def restart_timer():
+            if self.is_active:
+                self.set_active()
+
         self.timer.stop()
-        QTimer.singleShot(500, self.set_active)
+        QTimer.singleShot(500, restart_timer)
 
     """
     Simply override any of these methods in a subclass to implement a click handler
