@@ -90,7 +90,7 @@ private:
   int shmid;
   char *shared_memory;
   const key_t key = 123456;
-  const unsigned int shared_size = sizeof(double) + 30 * sizeof(double);
+  const unsigned int shared_size = sizeof(double) + 33 * sizeof(double);
 
   std::vector<double> abs_ffv;
   std::vector<cv::Rect> rois; // left eye, right eye

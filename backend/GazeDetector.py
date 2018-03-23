@@ -4,7 +4,7 @@ import subprocess as sp
 import numpy as np
 from time import sleep
 from keras.layers import Dense
-from keras.models import Sequential
+from keras.models import Sequential, model_from_json
 from keras.optimizers import SGD
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import Callback, ReduceLROnPlateau
@@ -27,6 +27,7 @@ class GazeDetector:
 
         self.neural_network = None
         self.init_model()
+        # self.load_model_from_file()
 
         self.last_id_seen = -1
         self.last_probabilities = None
@@ -38,11 +39,21 @@ class GazeDetector:
 
     def init_model(self):
         model = Sequential()
-        model.add(Dense(20, input_shape=(4,), kernel_initializer='uniform', activation='relu'))
+        model.add(Dense(20, input_shape=(9,), kernel_initializer='uniform', activation='relu'))
         model.add(Dense(20, kernel_initializer='uniform', activation='relu'))
         model.add(Dense(11, activation="softmax"))
         model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025))
         self.neural_network = model
+
+    def load_model_from_file(self):
+        with open('backend/model.json', 'r') as f:
+            loaded_model_json = f.read()
+            f.close()
+        loaded_model = model_from_json(loaded_model_json)
+        loaded_model.load_weights("backend/model_weights.h5")
+        loaded_model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025))
+
+        self.neural_network = loaded_model
 
     def sample(self):
         """
@@ -107,7 +118,7 @@ class GazeDetector:
             return np.asarray(reader.read())
 
     def extract_used_features(self, vector):
-        return vector[25:29]
+        return vector[25:]
 
     def calculate_location_probabilities_from_features(self, features):
         """
@@ -134,7 +145,7 @@ class GazeDetector:
         self.training_epochs = num_epochs
 
         progress_callback = ProgressCallback(self)
-        lr_callback = ReduceLROnPlateau(patience=8, monitor='loss')
+        lr_callback = ReduceLROnPlateau(patience=10, monitor='loss')
         callbacks = [progress_callback, lr_callback]
 
         self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=callbacks)
@@ -160,6 +171,7 @@ class GazeDetector:
         percent = count * 1.0 / total
 
         print('Percent correct:', percent)
+        return percent
 
 
 class ProgressCallback(Callback):
