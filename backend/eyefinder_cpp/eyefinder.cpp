@@ -261,6 +261,20 @@ void _EF_::EyeFinder::preCalculationPoints(
     abs_ffv.push_back(shp.x());
     abs_ffv.push_back(shp.y());
   }
+
+  auto nose_center = shapes[0].part(33);
+  double x_val = (double)nose_center.x() / screen_size.second;
+  double y_val = (double)nose_center.y() / screen_size.first;
+  facial_features_vec.push_back(x_val);
+  facial_features_vec.push_back(y_val);
+
+
+  double face_width = shapes[0].part(16).x() - shapes[0].part(0).x();
+  double face_height = shapes[0].part(27).y() - shapes[0].part(8).y();
+  double face_size = (double)std::abs(face_width * face_height);
+  double face_ratio = face_size / (screen_size.first * screen_size.second);
+
+  facial_features_vec.push_back(face_ratio);
 }
 
 // *****

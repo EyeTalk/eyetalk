@@ -54,7 +54,6 @@ class BaseEightButton(QWidget):
         if self.eye_state_manager.selection_made:
             self.push_button(self.eye_state_manager.selected_label)
             # TODO: Add noise here?
-            print('hit')
         elif self.eye_state_manager.new_gazed_button:
             self.show_gazed_button(self.eye_state_manager.selected_label)
 

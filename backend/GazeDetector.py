@@ -39,10 +39,10 @@ class GazeDetector:
 
     def init_model(self):
         model = Sequential()
-        model.add(Dense(20, input_shape=(30,), kernel_initializer='uniform', activation='relu'))
+        model.add(Dense(20, input_shape=(9,), kernel_initializer='uniform', activation='relu'))
         model.add(Dense(20, kernel_initializer='uniform', activation='relu'))
         model.add(Dense(11, activation="softmax"))
-        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025), metrics=['accuracy'])
+        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025))
         self.neural_network = model
 
     def load_model_from_file(self):
@@ -51,7 +51,7 @@ class GazeDetector:
             f.close()
         loaded_model = model_from_json(loaded_model_json)
         loaded_model.load_weights("backend/model_weights.h5")
-        loaded_model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025),  metrics=['accuracy'])
+        loaded_model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025))
 
         self.neural_network = loaded_model
 
@@ -118,7 +118,7 @@ class GazeDetector:
             return np.asarray(reader.read())
 
     def extract_used_features(self, vector):
-        return vector[1:]
+        return vector[25:]
 
     def calculate_location_probabilities_from_features(self, features):
         """

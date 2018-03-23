@@ -177,7 +177,7 @@ class Calibration(QGraphicsView):
             QTimer.singleShot(500, self.endPostBallMessage)
 
     def sendData(self):
-        data = self.parseData(self.data)
+        data = self.parseData(self.data, True)
         client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
         db = client['eyedata-devel']
         collection = db.Frames
@@ -186,17 +186,18 @@ class Calibration(QGraphicsView):
         collection.insert_many(data_to_send)
 
         self.finished_calibration = True
-        self.close()
-        self.parent.close()
 
-    def parseData(self, inputData):
+    def parseData(self, inputData, check_blinks=False):
         final_data = []
 
         last_id = -1
 
         for x, y in inputData:
             data_id = x[0]
+
             if data_id == last_id:
+                if check_blinks and self.detector.detect_blink(x):
+                    continue
                 final_data.append((x, y))
 
             last_id = data_id
@@ -226,7 +227,7 @@ class Calibration(QGraphicsView):
 
         accuracy = self.detector.test_accuracy(training_data, training_labels)
 
-        if accuracy > 0.85:
+        if accuracy >= 0.7:
             self.sendData()
 
         self.finished_calibration = True
