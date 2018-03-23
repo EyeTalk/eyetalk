@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from backend.GazeDetector import GazeDetector
 
+
 detector = GazeDetector()
 client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
 db = client['eyedata-devel']

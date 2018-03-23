@@ -26,7 +26,7 @@ class MainUIWindow(QtWidgets.QMainWindow):
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
 
-        self.stacked_widget.addWidget(Calibration(self, self.detector))
+        self.stacked_widget.addWidget(Calibration(self, self.detector, False))
         self.stacked_widget.addWidget(EightButtonMainMenu(self, self.detector))
         self.stacked_widget.addWidget(EightButtonKeyboard(self, self.detector))
         self.stacked_widget.addWidget(TwoButtonYesNo(self, self.detector))

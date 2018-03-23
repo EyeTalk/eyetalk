@@ -186,6 +186,8 @@ class Calibration(QGraphicsView):
         collection.insert_many(data_to_send)
 
         self.finished_calibration = True
+        self.close()
+        self.parent.close()
 
     def parseData(self, inputData, check_blinks=False):
         final_data = []
