@@ -224,7 +224,10 @@ class Calibration(QGraphicsView):
         self.detector.train_location_classifier(training_data, training_labels)
         self.finished_calibration = True
 
-        self.detector.test_accuracy(training_data, training_labels)
+        accuracy = self.detector.test_accuracy(training_data, training_labels)
+
+        if accuracy > 0.85:
+            self.sendData()
 
         self.finished_calibration = True
 

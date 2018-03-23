@@ -17,7 +17,7 @@ class GazeDetector:
 
     def __init__(self, external_camera=False):
 
-        # # TODO: parameterize so that we can pass in the camera number
+        # TODO: parameterize so that we can pass in the camera number
         self.cpp_proc = sp.Popen(['{prefix}/backend/eyefinder_cpp/build/eyefinder'.format(prefix=os.getcwd())])
 
         # clean up IPC at end
@@ -26,8 +26,8 @@ class GazeDetector:
         self.active = (self.cpp_proc.poll() is not None)
 
         self.neural_network = None
-        # self.init_model()
-        self.load_model_from_file()
+        self.init_model()
+        # self.load_model_from_file()
 
         self.last_id_seen = -1
         self.last_probabilities = None
@@ -41,18 +41,17 @@ class GazeDetector:
         model = Sequential()
         model.add(Dense(20, input_shape=(30,), kernel_initializer='uniform', activation='relu'))
         model.add(Dense(20, kernel_initializer='uniform', activation='relu'))
-        model.add(Dense(20, kernel_initializer='uniform', activation='relu'))
         model.add(Dense(11, activation="softmax"))
-        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025))
+        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025), metrics=['accuracy'])
         self.neural_network = model
 
     def load_model_from_file(self):
-        with open('backend/test_model.json', 'r') as f:
+        with open('backend/model.json', 'r') as f:
             loaded_model_json = f.read()
             f.close()
         loaded_model = model_from_json(loaded_model_json)
-        loaded_model.load_weights("backend/test_model.h5")
-        loaded_model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025))
+        loaded_model.load_weights("backend/model_weights.h5")
+        loaded_model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025),  metrics=['accuracy'])
 
         self.neural_network = loaded_model
 
@@ -146,7 +145,7 @@ class GazeDetector:
         self.training_epochs = num_epochs
 
         progress_callback = ProgressCallback(self)
-        lr_callback = ReduceLROnPlateau(patience=25, monitor='loss')
+        lr_callback = ReduceLROnPlateau(patience=10, monitor='loss')
         callbacks = [progress_callback, lr_callback]
 
         self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=callbacks)
@@ -172,6 +171,7 @@ class GazeDetector:
         percent = count * 1.0 / total
 
         print('Percent correct:', percent)
+        return percent
 
 
 class ProgressCallback(Callback):
