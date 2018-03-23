@@ -108,30 +108,33 @@ class EightButtonKeyboard(BaseEightButton):
         self.set_text_label(self.label_text)
 
     def push_button_1_onclick(self):
-        if self.current_keyboard_screen == 0:
-            self.add_predicted(self.text_1 + ' ')
-            self.load_keyboard_screen(0)
-        elif self.current_keyboard_screen == 6:
-            self.load_keyboard_screen(5)
-        else:
-            self.add_character(self.text_1)
-            self.load_keyboard_screen(0)
+        if self.pushButton_1.isEnabled():
+            if self.current_keyboard_screen == 0:
+                self.add_predicted(self.text_1 + ' ')
+                self.load_keyboard_screen(0)
+            elif self.current_keyboard_screen == 6:
+                self.load_keyboard_screen(5)
+            else:
+                self.add_character(self.text_1)
+                self.load_keyboard_screen(0)
 
     def push_button_2_onclick(self):
-        if self.current_keyboard_screen == 0:
-            self.add_predicted(self.text_2 + ' ')
-            self.load_keyboard_screen(0)
-        else:
-            self.add_character(self.text_2)
-            self.load_keyboard_screen(0)
+        if self.pushButton_2.isEnabled():
+            if self.current_keyboard_screen == 0:
+                self.add_predicted(self.text_2 + ' ')
+                self.load_keyboard_screen(0)
+            else:
+                self.add_character(self.text_2)
+                self.load_keyboard_screen(0)
 
     def push_button_3_onclick(self):
-        if self.current_keyboard_screen == 0:
-            self.add_predicted(self.text_3 + ' ')
-            self.load_keyboard_screen(0)
-        else:
-            self.add_character(self.text_3)
-            self.load_keyboard_screen(0)
+        if self.pushButton_3.isEnabled():
+            if self.current_keyboard_screen == 0:
+                self.add_predicted(self.text_3 + ' ')
+                self.load_keyboard_screen(0)
+            else:
+                self.add_character(self.text_3)
+                self.load_keyboard_screen(0)
 
     def push_button_4_onclick(self):
         if self.current_keyboard_screen == 0:
