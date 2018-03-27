@@ -19,6 +19,7 @@ _EF_::EyeFinder::EyeFinder(void) : cap(0), abs_ffv{}, rois{} {
     std::cout << sem_name << ", errno: " << errno << std::endl;
     sem = sem_open(sem_name, O_CREAT, 0666, 1);
     sem_close(sem);
+    sem_unlink(sem_name);
     exit(1);
   } else {
     printf("sem: %p\n", sem);
@@ -107,6 +108,9 @@ int _EF_::EyeFinder::start(void) {
       if (shapes.size()) {
 
         std::vector<double> facial_features_vec;
+
+        calculateEyeRatio(shapes, facial_features_vec, 36);
+        calculateEyeRatio(shapes, facial_features_vec, 42);
 
         // Left eye + Right eye points
         preCalculationPoints(shapes, facial_features_vec, screen_size);
@@ -201,6 +205,25 @@ bool _EF_::EyeFinder::ischkbad(void) {
   return false; // Temporary
 }
 
+void _EF_::EyeFinder::calculateEyeRatio(const std::vector<dlib::full_object_detection> &shapes,
+                                        std::vector<double> &facial_features_vec,
+                                        int start) {
+    auto shape_list = shapes[0];
+    std::complex<double> p0 (shape_list.part(start).x(), shape_list.part(start).y());
+    std::complex<double> p1 (shape_list.part(start + 1).x(), shape_list.part(start + 1).y());
+    std::complex<double> p2 (shape_list.part(start + 2).x(), shape_list.part(start + 2).y());
+    std::complex<double> p3 (shape_list.part(start + 3).x(), shape_list.part(start + 3).y());
+    std::complex<double> p4 (shape_list.part(start + 4).x(), shape_list.part(start + 4).y());
+    std::complex<double> p5 (shape_list.part(start + 5).x(), shape_list.part(start + 5).y());
+
+    double dist1 = std::sqrt(std::norm(p1 - p5));
+    double dist2 = std::sqrt(std::norm(p2 - p4));
+    double dist3 = std::sqrt(std::norm(p0 - p3));
+
+    double eye_ratio = (dist1 + dist2) / (dist3 * 2.0);
+    facial_features_vec.push_back(eye_ratio);
+}
+
 // *****
 // setMinAndMax
 std::tuple<long, long, long, long> _EF_::EyeFinder::setMinAndMax(
@@ -256,8 +279,8 @@ void _EF_::EyeFinder::preCalculationPoints(
     auto shp = shapes[0].part(i);
     double x_val = (double)shp.x() / screen_size.second;
     double y_val = (double)shp.y() / screen_size.first;
-    facial_features_vec.push_back(x_val);
-    facial_features_vec.push_back(y_val);
+//    facial_features_vec.push_back(x_val);
+//    facial_features_vec.push_back(y_val);
     abs_ffv.push_back(shp.x());
     abs_ffv.push_back(shp.y());
   }
@@ -434,11 +457,12 @@ void _EF_::EyeFinder::calculatePupilsEL(
 // *****
 // writeFacialFeaturesToShm()
 //  Will be to shared memory with semaphore synchronization
-//  0-11 = x, y coordinates of left eye points
-//  12-23 = x, y coordinates of right eye points
-//  24, 25 = x, y coordinates of left eye center (timm)
-//  26, 27 = x, y coordinates of right eye center (timm)
-//  28-29 = face angles (another code)
+//  0, 1 = left, right eye aspect ratios
+//  2, 3 = x, y coordinates of right eye points
+//  4    = face ratio
+//  5, 6 = x, y coordinates of left eye center (timm)
+//  7, 8 = x, y coordinates of right eye center (timm)
+//  9-11 = face angles
 void _EF_::EyeFinder::writeFacialFeaturesToShm(
     const std::vector<double> &facial_features_vec) {
   int i = 0;

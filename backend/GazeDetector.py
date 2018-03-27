@@ -1,5 +1,6 @@
 import atexit
 import os
+import sys
 import subprocess as sp
 import numpy as np
 from time import sleep
@@ -15,19 +16,26 @@ from backend.ipc_reader import IPCReader
 class GazeDetector:
     DEFAULT_BLINK_THRESHOLD = 0.35
 
-    def __init__(self, external_camera=False):
+    def __init__(self, load_model=False, use_cpp=True):
+        """
+        The use_cpp parameter is used to make it easy to do machine learning training without running the backend too.
+        """
 
-        # TODO: parameterize so that we can pass in the camera number
-        self.cpp_proc = sp.Popen(['{prefix}/backend/eyefinder_cpp/build/eyefinder'.format(prefix=os.getcwd())])
+        self.cpp_proc = None
+        self.active = False
+
+        if use_cpp:
+            self.init_cpp_backend()
 
         # clean up IPC at end
         atexit.register(self.cleanup)
-        sleep(2)
-        self.active = (self.cpp_proc.poll() is not None)
 
         self.neural_network = None
-        self.init_model()
-        # self.load_model_from_file()
+
+        if load_model:
+            self.load_model_from_file()
+        else:
+            self.init_model()
 
         self.last_id_seen = -1
         self.last_probabilities = None
@@ -37,12 +45,27 @@ class GazeDetector:
         self.current_epoch = 0
         self.blink_threshold = self.DEFAULT_BLINK_THRESHOLD
 
+    def init_cpp_backend(self):
+        for _ in range(3):
+            self.cpp_proc = sp.Popen(['{prefix}/backend/eyefinder_cpp/build/eyefinder'.format(prefix=os.getcwd())])
+            sleep(2)
+            self.active = (self.cpp_proc.poll() is None)
+
+            if self.active:
+                return
+            else:
+                self.cpp_proc.terminate()
+                self.cpp_proc = None
+                self.cleanup()
+                sleep(2)
+        sys.exit('The program is unable to start the eye tracking system')
+
     def init_model(self):
         model = Sequential()
-        model.add(Dense(20, input_shape=(9,), kernel_initializer='uniform', activation='relu'))
+        model.add(Dense(20, input_shape=(11,), kernel_initializer='uniform', activation='relu'))
         model.add(Dense(20, kernel_initializer='uniform', activation='relu'))
         model.add(Dense(11, activation="softmax"))
-        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025))
+        model.compile(loss='categorical_crossentropy', optimizer=SGD(lr=0.025), metrics=['accuracy'])
         self.neural_network = model
 
     def load_model_from_file(self):
@@ -82,8 +105,10 @@ class GazeDetector:
         return feature_id, blinking, probabilities
 
     def detect_blink(self, features):
-        left_eye_aspect_ratio = self.calculate_eye_ratio(features[1:13])
-        right_eye_aspect_ratio = self.calculate_eye_ratio(features[13:25])
+        # left_eye_aspect_ratio = self.calculate_eye_ratio(features[1:13])
+        # right_eye_aspect_ratio = self.calculate_eye_ratio(features[13:25])
+        left_eye_aspect_ratio = features[1]
+        right_eye_aspect_ratio = features[2]
 
         average_ratio = (left_eye_aspect_ratio + right_eye_aspect_ratio) / 2
         return average_ratio < self.blink_threshold
@@ -104,9 +129,12 @@ class GazeDetector:
         """
         Clean up the semaphore, shared memory, and kill the eye finder process
         """
-        with IPCReader() as reader:
-            reader.clean()
-        self.cpp_proc.kill()
+        try:
+            with IPCReader() as reader:
+                reader.clean()
+            self.cpp_proc.kill()
+        except Exception:
+            pass
 
     @staticmethod
     def sample_features():
@@ -118,7 +146,7 @@ class GazeDetector:
             return np.asarray(reader.read())
 
     def extract_used_features(self, vector):
-        return vector[25:]
+        return vector[1:]
 
     def calculate_location_probabilities_from_features(self, features):
         """
@@ -181,11 +209,3 @@ class ProgressCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         self.detector.current_epoch = epoch
-
-
-if __name__ == '__main__':
-    tracker = GazeDetector()
-    sleep(1)
-    for _ in range(100):
-        sleep(0.05)
-        tracker.sample()

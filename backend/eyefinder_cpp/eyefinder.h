@@ -10,6 +10,7 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 
+
 #include <cmath>
 #include <string>
 #include <tuple>
@@ -90,7 +91,7 @@ private:
   int shmid;
   char *shared_memory;
   const key_t key = 123456;
-  const unsigned int shared_size = sizeof(double) + 33 * sizeof(double);
+  const unsigned int shared_size = 12 * sizeof(double);
 
   std::vector<double> abs_ffv;
   std::vector<cv::Rect> rois; // left eye, right eye
@@ -114,6 +115,9 @@ private:
   void calculatePupilsEL(const std::vector<dlib::full_object_detection> &shapes,
                          std::vector<double> &facial_features_vec,
                          cv::Mat temp);
+  void calculateEyeRatio(const std::vector<dlib::full_object_detection> &shapes,
+                         std::vector<double> &facial_features_vec,
+                         int start);
   void writeFacialFeaturesToShm(const std::vector<double> &facial_features_vec);
   void writeBadFacialFeaturesToShm(void);
 };

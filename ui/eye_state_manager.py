@@ -1,4 +1,3 @@
-import os
 import numpy as np
 from queue import deque
 
@@ -37,7 +36,7 @@ class EyeStateManager:
                 if self.blink_count >= self.BLINK_THRESHOLD:
                     self.selection_made = True
                     self.blink_count = 0
-                    # os.system("afplay ui/sounds/Snap.mp3")
+                    self.sample_queue = deque(maxlen=self.SAMPLES_AVERAGED)
                     return
 
                 self.blink_count = 0

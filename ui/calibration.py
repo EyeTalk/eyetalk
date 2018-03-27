@@ -7,7 +7,7 @@ from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 from ui.ui_layout import build_layout_dictionary
 
 
-EACH_BUTTON_TIME = 1500
+EACH_BUTTON_TIME = 1800
 
 
 class Ball(QObject):
@@ -180,7 +180,7 @@ class Calibration(QGraphicsView):
         data = self.parseData(self.data, True)
         client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
         db = client['eyedata-devel']
-        collection = db.Frames
+        collection = db.Test
 
         data_to_send = [{'x': [float(n) for n in x], 'y': y} for x, y in data]
         collection.insert_many(data_to_send)
@@ -195,7 +195,7 @@ class Calibration(QGraphicsView):
         for x, y in inputData:
             data_id = x[0]
 
-            if data_id == last_id:
+            if data_id != last_id:
                 if check_blinks and self.detector.detect_blink(x):
                     continue
                 final_data.append((x, y))
@@ -214,10 +214,10 @@ class Calibration(QGraphicsView):
             training_data.append(x_vector)
             training_labels.append(y)
 
-        left_eye_ratios = [self.detector.calculate_eye_ratio(features[0][1:13]) for features in filtered_data]
+        left_eye_ratios = [features[0][1] for features in filtered_data]
         twenty_pct = len(left_eye_ratios) // 5
         left_eye_ratios = sorted(left_eye_ratios)[twenty_pct: -twenty_pct]
-        right_eye_ratios = [self.detector.calculate_eye_ratio(features[0][13:25]) for features in filtered_data]
+        right_eye_ratios = [features[0][2] for features in filtered_data]
         right_eye_ratios = sorted(right_eye_ratios)[twenty_pct: -twenty_pct]
         baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
         self.detector.set_new_blink_threshold(baseline_eye_ratio)
@@ -227,7 +227,7 @@ class Calibration(QGraphicsView):
 
         accuracy = self.detector.test_accuracy(training_data, training_labels)
 
-        if accuracy >= 0.7:
+        if accuracy >= 0.4:
             self.sendData()
 
         self.finished_calibration = True

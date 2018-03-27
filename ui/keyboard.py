@@ -3,6 +3,7 @@ from ui.keyboard_constants import *
 from ui.word_recommendations.recommendations import RecommendationSystem
 from ui.tts import *
 
+
 class EightButtonKeyboard(BaseEightButton):
 
     def __init__(self, parent, detector):

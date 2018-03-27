@@ -13,6 +13,7 @@ class EightButtonMainMenu(BaseEightButton):
         pygame.init()
 
     def closeApp(self):
+        self.set_inactive()
         self.close()
         self.parent.close()
 

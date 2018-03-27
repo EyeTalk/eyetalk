@@ -5,7 +5,7 @@ import struct
 
 
 class IPCReader:
-    elements_in_vector = 34
+    elements_in_vector = 12
     sizeofdouble = ctypes.sizeof(ctypes.c_double)
 
     def __enter__(self):
