@@ -1,5 +1,6 @@
 from threading import Thread
 from pymongo import MongoClient
+from getpass import getuser
 from PyQt5.QtWidgets import (QGraphicsView,
         QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
 from PyQt5.QtGui import QPainter, QPixmap
@@ -181,8 +182,10 @@ class Calibration(QGraphicsView):
         client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
         db = client['eyedata-devel']
         collection = db.Test
+        
+        user = getuser()
 
-        data_to_send = [{'x': [float(n) for n in x], 'y': y} for x, y in data]
+        data_to_send = [{'x': [float(n) for n in x], 'y': y, 'name': user} for x, y in data]
         collection.insert_many(data_to_send)
 
         self.finished_calibration = True
@@ -227,7 +230,7 @@ class Calibration(QGraphicsView):
 
         accuracy = self.detector.test_accuracy(training_data, training_labels)
 
-        if accuracy >= 0.4:
+        if accuracy >= 0.3:
             self.sendData()
 
         self.finished_calibration = True
