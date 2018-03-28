@@ -43,11 +43,12 @@ class BaseEightButton(QWidget):
         def start_timer():
             self.timer.start(10)
 
-        QTimer.singleShot(500, start_timer)
+        QTimer.singleShot(250, start_timer)
         self.eye_state_manager = EyeStateManager()
 
     def set_inactive(self):
         self.is_active = False
+        self.show_gazed_button(-1)
         self.timer.stop()
 
     def check_gaze(self):

@@ -34,8 +34,12 @@ class BaseTwoButton(QWidget):
         def start_timer():
             self.timer.start(10)
 
-        QTimer.singleShot(500, start_timer)
+        QTimer.singleShot(250, start_timer)
         self.eye_state_manager = EyeStateManager(self.select_label_from_probabilities)
+
+    def set_inactive(self):
+        self.is_active = False
+        self.timer.stop()
 
     def check_gaze(self):
         given_id, blink, probabilities = self.detector.sample()
@@ -49,7 +53,7 @@ class BaseTwoButton(QWidget):
             self.show_gazed_button(self.eye_state_manager.selected_label)
 
     def go_to_widget(self, widget_number):
-        self.timer.stop()
+        self.set_inactive()
         self.show_gazed_button(-1)
         self.parent.set_active_widget(widget_number)
 

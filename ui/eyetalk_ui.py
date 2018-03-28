@@ -18,7 +18,7 @@ class MainUIWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         sg = QDesktopWidget().screenGeometry()
 
-        self.detector = GazeDetector(load_model=False)
+        self.detector = GazeDetector(load_model=True)
 
         self.screen = QPointF(sg.width(), sg.height())
         self.showFullScreen()

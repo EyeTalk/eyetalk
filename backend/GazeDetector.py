@@ -8,7 +8,7 @@ from keras.layers import Dense
 from keras.models import Sequential, model_from_json
 from keras.optimizers import SGD
 from keras.utils.np_utils import to_categorical
-from keras.callbacks import Callback, ReduceLROnPlateau
+from keras.callbacks import Callback, ReduceLROnPlateau, EarlyStopping
 
 from backend.ipc_reader import IPCReader
 
@@ -43,6 +43,7 @@ class GazeDetector:
 
         self.training_epochs = 0
         self.current_epoch = 0
+        self.current_accuracy = 0.0
         self.blink_threshold = self.DEFAULT_BLINK_THRESHOLD
 
     def init_cpp_backend(self):
@@ -173,8 +174,9 @@ class GazeDetector:
         self.training_epochs = num_epochs
 
         progress_callback = ProgressCallback(self)
-        lr_callback = ReduceLROnPlateau(patience=10, monitor='loss')
-        callbacks = [progress_callback, lr_callback]
+        lr_callback = ReduceLROnPlateau(patience=10, monitor='acc')
+        stop_callback = EarlyStopping(patience=25, min_delta=0.005, monitor='acc')
+        callbacks = [progress_callback, lr_callback, stop_callback]
 
         self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=callbacks)
 
@@ -209,3 +211,4 @@ class ProgressCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         self.detector.current_epoch = epoch
+        self.detector.current_accuracy = logs['acc']

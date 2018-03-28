@@ -168,21 +168,23 @@ class Calibration(QGraphicsView):
         else:
             if self.train_at_end:
                 training_pct = int(100 * self.detector.current_epoch / self.detector.training_epochs)
+                accuracy = round(100 * self.detector.current_accuracy, 1)
                 text = """
                     <h2>Data gathering complete!</h2>
-                    <p>Calibrating ... {pct}%</p>
-                """.format(pct=training_pct)
+                    <p>Calibrating ...  {pct}%</p>
+                    <p>Expected Accuracy: {acc}%</p>
+                """.format(pct=training_pct, acc=accuracy)
 
                 self.textbox.setHtml(text)
 
-            QTimer.singleShot(500, self.endPostBallMessage)
+            QTimer.singleShot(250, self.endPostBallMessage)
 
     def sendData(self):
         data = self.parseData(self.data, True)
         client = MongoClient('mongodb://JohnH:johnhoward@ds231228.mlab.com:31228/eyedata-devel')
         db = client['eyedata-devel']
         collection = db.Test
-        
+
         user = getuser()
 
         data_to_send = [{'x': [float(n) for n in x], 'y': y, 'name': user} for x, y in data]
@@ -228,7 +230,7 @@ class Calibration(QGraphicsView):
         self.detector.train_location_classifier(training_data, training_labels)
         self.finished_calibration = True
 
-        accuracy = self.detector.test_accuracy(training_data, training_labels)
+        accuracy = self.detector.current_accuracy
 
         if accuracy >= 0.3:
             self.sendData()
