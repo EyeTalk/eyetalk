@@ -10,6 +10,7 @@ from ui.yes_no import TwoButtonYesNo
 from ui.greetings import EightButtonGreeting
 from ui.feelings import EightButtonFeeling
 from ui.go import TwoButtonGo
+from ui.entertainment import EightButtonEntertainment
 
 from backend.GazeDetector import GazeDetector
 
@@ -34,7 +35,8 @@ class MainUIWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(EightButtonGreeting(self, self.detector))
         self.stacked_widget.addWidget(EightButtonFeeling(self, self.detector))
         self.stacked_widget.addWidget(TwoButtonGo(self, self.detector))
-        self.set_active_widget(1)
+        self.stacked_widget.addWidget(EightButtonEntertainment(self, self.detector))
+        self.set_active_widget(0)
 
         self.output_method = None
 

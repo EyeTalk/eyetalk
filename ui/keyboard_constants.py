@@ -113,3 +113,14 @@ FEELINGS = [
     'SICK',
     'ANNOYED'
 ]
+
+ENTERTAINMENT =[
+    'MUSIC \nON',
+    'MUSIC \nOFF',
+    'MUSIC \nCHANGE',
+    'VOLUME \nUP',
+    'TV \nON',
+    'TV \nOFF',
+    'TV \nCHANGE',
+    'VOLUME \nDOWN'
+]
