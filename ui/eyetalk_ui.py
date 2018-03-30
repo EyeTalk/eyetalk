@@ -34,7 +34,7 @@ class MainUIWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(EightButtonGreeting(self, self.detector))
         self.stacked_widget.addWidget(EightButtonFeeling(self, self.detector))
         self.stacked_widget.addWidget(TwoButtonGo(self, self.detector))
-        self.set_active_widget(0)
+        self.set_active_widget(1)
 
         self.output_method = None
 
