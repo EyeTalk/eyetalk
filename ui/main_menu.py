@@ -3,12 +3,20 @@ from ui.base_8_button import BaseEightButton
 
 
 class EightButtonMainMenu(BaseEightButton):
+    TEXT = 'text'
+    READ = 'read'
+    TEXT_LABEL = 'Say out loud\n\n>Send text<'
+    READ_LABEL = '>Say out loud<\n\nSend text'
+
     def __init__(self, parent, detector):
         BaseEightButton.__init__(self, parent, detector)
         self.base_string = "Please select an option"
 
         self.set_button_texts()
         self.set_text_label(self.base_string)
+
+        self.output_type = self.READ
+        self.parent.output_method = self.READ
 
         pygame.init()
 
@@ -31,6 +39,7 @@ class EightButtonMainMenu(BaseEightButton):
         self.pushButton_7.setText("Games")
         self.pushButton_8.setText("Keyboard")
         self.topLeftButton.setText("Exit")
+        self.topRightButton.setText(self.READ_LABEL)
 
     def push_button_1_onclick(self):
         self.openWindow(3)
@@ -53,3 +62,13 @@ class EightButtonMainMenu(BaseEightButton):
 
     def top_left_button_onclick(self):
         self.closeApp()
+
+    def top_right_button_onclick(self):
+        if self.output_type == self.TEXT:
+            self.output_type = self.READ
+            self.topRightButton.setText(self.READ_LABEL)
+        else:
+            self.output_type = self.TEXT
+            self.topRightButton.setText(self.TEXT_LABEL)
+
+        self.parent.output_method = self.output_type

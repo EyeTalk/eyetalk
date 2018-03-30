@@ -1,6 +1,6 @@
 from ui.base_8_button import BaseEightButton
 from ui.keyboard_constants import *
-from ui.tts import *
+
 
 class EightButtonFeeling(BaseEightButton):
     def __init__(self, parent, detector):
@@ -30,28 +30,28 @@ class EightButtonFeeling(BaseEightButton):
         self.topLeftButton.setText(MAINMENU)
 
     def push_button_1_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[0].replace("-", ""))
+        self.parent.handle_output(self.base_string + FEELINGS[0].replace("-", ""))
 
     def push_button_2_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[1])
+        self.parent.handle_output(self.base_string + FEELINGS[1])
 
     def push_button_3_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[2])
+        self.parent.handle_output(self.base_string + FEELINGS[2])
 
     def push_button_4_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[3])
+        self.parent.handle_output(self.base_string + FEELINGS[3])
 
     def push_button_5_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[4])
+        self.parent.handle_output(self.base_string + FEELINGS[4])
 
     def push_button_6_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[5])
+        self.parent.handle_output(self.base_string + FEELINGS[5])
 
     def push_button_7_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[6])
+        self.parent.handle_output(self.base_string + FEELINGS[6])
 
     def push_button_8_onclick(self):
-        textToSpeech(self.base_string + FEELINGS[7])
+        self.parent.handle_output(self.base_string + FEELINGS[7])
 
     def top_left_button_onclick(self):
         self.goBack()

@@ -106,8 +106,6 @@ class GazeDetector:
         return feature_id, blinking, probabilities
 
     def detect_blink(self, features):
-        # left_eye_aspect_ratio = self.calculate_eye_ratio(features[1:13])
-        # right_eye_aspect_ratio = self.calculate_eye_ratio(features[13:25])
         left_eye_aspect_ratio = features[1]
         right_eye_aspect_ratio = features[2]
 
@@ -174,8 +172,8 @@ class GazeDetector:
         self.training_epochs = num_epochs
 
         progress_callback = ProgressCallback(self)
-        lr_callback = ReduceLROnPlateau(patience=10, monitor='acc')
-        stop_callback = EarlyStopping(patience=25, min_delta=0.005, monitor='acc')
+        lr_callback = ReduceLROnPlateau(patience=25, monitor='acc')
+        stop_callback = EarlyStopping(patience=100, monitor='acc')
         callbacks = [progress_callback, lr_callback, stop_callback]
 
         self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=callbacks)

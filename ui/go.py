@@ -1,6 +1,6 @@
 from ui.base_2_button import BaseTwoButton
 from ui.keyboard_constants import *
-from ui.tts import *
+
 
 class TwoButtonGo(BaseTwoButton):
     def __init__(self, parent, detector):
@@ -23,10 +23,10 @@ class TwoButtonGo(BaseTwoButton):
         self.topLeftButton.setText(MAINMENU)
 
     def push_button_1_onclick(self):
-        textToSpeech(self.base_string + OUTSIDE)
+        self.parent.handle_output(self.base_string + OUTSIDE)
 
     def push_button_2_onclick(self):
-        textToSpeech(self.base_string + HOME)
+        self.parent.handle_output(self.base_string + HOME)
 
     def top_left_button_onclick(self):
         self.goBack()

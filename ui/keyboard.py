@@ -1,7 +1,6 @@
 from ui.base_8_button import BaseEightButton
 from ui.keyboard_constants import *
 from ui.word_recommendations.recommendations import RecommendationSystem
-from ui.tts import *
 
 
 class EightButtonKeyboard(BaseEightButton):
@@ -26,6 +25,7 @@ class EightButtonKeyboard(BaseEightButton):
         self.rec = RecommendationSystem()
 
         self.current_keyboard_screen = 0
+        self.last_added = ''
 
         self.load_keyboard_screen(0)
 
@@ -108,6 +108,17 @@ class EightButtonKeyboard(BaseEightButton):
         self.label_text = ''
         self.set_text_label(self.label_text)
 
+    def clear_word(self):
+        text = self.label_text.strip()
+        last_space_index = text.rfind(' ')
+        self.label_text = self.label_text[:last_space_index + 1] if last_space_index >= 0 else ''
+        self.set_text_label(self.label_text)
+
+        if self.label_text:
+            self.topLeftButton.setText(CLEAR)
+        else:
+            self.topLeftButton.setText(MAINMENU)
+
     def push_button_1_onclick(self):
         if self.pushButton_1.isEnabled():
             if self.current_keyboard_screen == 0:
@@ -183,9 +194,8 @@ class EightButtonKeyboard(BaseEightButton):
     def top_left_button_onclick(self):
         if self.current_keyboard_screen == 0:
             if self.label_text:
-                self.clear_all()
+                self.clear_word()
                 self.load_keyboard_screen(0)
-                self.topLeftButton.setText(MAINMENU)
             else:
                 self.clear_all()
                 self.goBack()
@@ -197,7 +207,7 @@ class EightButtonKeyboard(BaseEightButton):
             self.load_keyboard_screen(0)
 
     def top_right_button_onclick(self):
-        textToSpeech(self.label_text)
+        self.parent.handle_output(self.label_text)
         self.clear_all()
         self.topLeftButton.setText(MAINMENU)
         self.load_keyboard_screen(0)

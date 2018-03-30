@@ -1,6 +1,7 @@
 from threading import Thread
 from pymongo import MongoClient
 from getpass import getuser
+from random import gauss
 from PyQt5.QtWidgets import (QGraphicsView,
         QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
 from PyQt5.QtGui import QPainter, QPixmap
@@ -102,7 +103,7 @@ class Calibration(QGraphicsView):
         self.sample_timer = QTimer(self)
         self.sample_timer.timeout.connect(self.sample_features)
 
-        total_timeout = EACH_BUTTON_TIME * len(self.button_positions) * 2
+        total_timeout = EACH_BUTTON_TIME * len(self.button_positions) * 2 + 1000
         QTimer.singleShot(total_timeout, self.endBallAnimation)
         self.move_ball()
 
@@ -209,6 +210,21 @@ class Calibration(QGraphicsView):
 
         return final_data
 
+    def augment_data(self, data, labels):
+        final_data = []
+        final_labels = []
+
+        for features, label in zip(data, labels):
+            final_data.append(features)
+            final_labels.append(label)
+
+            # create changed vector here
+            new_features = [n + gauss(0, 0.005) for n in features]
+            final_data.append(new_features)
+            final_labels.append(label)
+
+        return final_data, final_labels
+
     def train_machine_learning(self):
         filtered_data = self.parseData(self.data)
         training_data = []
@@ -227,12 +243,14 @@ class Calibration(QGraphicsView):
         baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
         self.detector.set_new_blink_threshold(baseline_eye_ratio)
 
+        training_data, training_labels = self.augment_data(training_data, training_labels)
+
         self.detector.train_location_classifier(training_data, training_labels)
         self.finished_calibration = True
 
         accuracy = self.detector.current_accuracy
 
-        if accuracy >= 0.3:
+        if accuracy >= 0.5:
             self.sendData()
 
         self.finished_calibration = True

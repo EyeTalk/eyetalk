@@ -1,3 +1,4 @@
+import ui.output_text
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QDesktopWidget, QStackedWidget
 from PyQt5.QtCore import QPointF
@@ -35,7 +36,16 @@ class MainUIWindow(QtWidgets.QMainWindow):
         self.stacked_widget.addWidget(TwoButtonGo(self, self.detector))
         self.set_active_widget(0)
 
+        self.output_method = None
+
     def set_active_widget(self, widget_number):
         self.stacked_widget.setCurrentIndex(widget_number)
         self.stacked_widget.widget(widget_number).set_active()
 
+    def handle_output(self, message):
+        if message:
+            if self.output_method == 'text':
+                ui.output_text.send_text_message(message)
+                ui.output_text.textToSpeech('Message sent.')
+            else:
+                ui.output_text.textToSpeech(message)

@@ -1,6 +1,6 @@
 from ui.base_8_button import BaseEightButton
 from ui.keyboard_constants import *
-from ui.tts import *
+
 
 class EightButtonGreeting(BaseEightButton):
     def __init__(self, parent, detector):
@@ -30,28 +30,28 @@ class EightButtonGreeting(BaseEightButton):
         self.topLeftButton.setText(MAINMENU)
 
     def push_button_1_onclick(self):
-        textToSpeech(GREETINGS[0])
+        self.parent.handle_output(GREETINGS[0])
 
     def push_button_2_onclick(self):
-        textToSpeech(GREETINGS[1])
+        self.parent.handle_output(GREETINGS[1])
 
     def push_button_3_onclick(self):
-        textToSpeech(GREETINGS[2])
+        self.parent.handle_output(GREETINGS[2])
 
     def push_button_4_onclick(self):
-        textToSpeech(GREETINGS[3])
+        self.parent.handle_output(GREETINGS[3])
 
     def push_button_5_onclick(self):
-        textToSpeech(GREETINGS[4])
+        self.parent.handle_output(GREETINGS[4])
 
     def push_button_6_onclick(self):
-        textToSpeech(GREETINGS[5])
+        self.parent.handle_output(GREETINGS[5])
 
     def push_button_7_onclick(self):
-        textToSpeech(GREETINGS[6])
+        self.parent.handle_output(GREETINGS[6])
 
     def push_button_8_onclick(self):
-        textToSpeech(GREETINGS[7])
+        self.parent.handle_output(GREETINGS[7])
 
     def top_left_button_onclick(self):
         self.goBack()
