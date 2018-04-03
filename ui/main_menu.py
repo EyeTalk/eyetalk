@@ -21,11 +21,6 @@ class EightButtonMainMenu(BaseEightButton):
 
         pygame.init()
 
-    def closeApp(self):
-        self.set_inactive()
-        self.close()
-        self.parent.close()
-
     def openWindow(self, num):
         self.go_to_widget(num)
 
@@ -71,7 +66,7 @@ class EightButtonMainMenu(BaseEightButton):
         self.openWindow(2)
 
     def top_left_button_onclick(self):
-        self.closeApp()
+        self.openWindow(8)
 
     def top_right_button_onclick(self):
         if self.output_type == self.TEXT:
