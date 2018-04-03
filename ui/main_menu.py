@@ -57,7 +57,7 @@ class EightButtonMainMenu(BaseEightButton):
         self.openWindow(7)
 
     def push_button_7_onclick(self):
-        joke = ui.jokes.getJoke()
+        joke = ui.jokes.getCleanJoke()
         while len(joke) > 280:
             joke = ui.jokes.getJoke()
         self.parent.handle_output(joke)
