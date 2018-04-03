@@ -9,7 +9,7 @@ from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt, QRect)
 from ui.ui_layout import build_layout_dictionary
 
 
-EACH_BUTTON_TIME = 510
+EACH_BUTTON_TIME = 1800
 PRE_CALIB_MSG_TIME = 8000
 
 
@@ -71,6 +71,7 @@ class Calibration(QGraphicsView):
         self.label = QLabel()
         self.label.setText('EyeTalk')
         self.label.setFont(QFont("Arial", 200))
+        self.label.adjustSize()
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setAutoFillBackground(False)
         self.label.adjustSize()
@@ -312,13 +313,16 @@ class Calibration(QGraphicsView):
             training_data.append(x_vector)
             training_labels.append(y)
 
-        left_eye_ratios = [features[0][1] for features in filtered_data]
-        twenty_pct = len(left_eye_ratios) // 5
-        left_eye_ratios = sorted(left_eye_ratios)[twenty_pct: -twenty_pct]
-        right_eye_ratios = [features[0][2] for features in filtered_data]
-        right_eye_ratios = sorted(right_eye_ratios)[twenty_pct: -twenty_pct]
-        baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
-        self.detector.set_new_blink_threshold(baseline_eye_ratio)
+        try:
+            left_eye_ratios = [features[0][1] for features in filtered_data if features[1] in (2, 3, 5, 6, 7, 8)]
+            twenty_pct = len(left_eye_ratios) // 5
+            left_eye_ratios = sorted(left_eye_ratios)[twenty_pct: -twenty_pct]
+            right_eye_ratios = [features[0][2] for features in filtered_data if features[1] in (2, 3, 5, 6, 7, 8)]
+            right_eye_ratios = sorted(right_eye_ratios)[twenty_pct: -twenty_pct]
+            baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
+            self.detector.set_new_blink_threshold(baseline_eye_ratio)
+        except ZeroDivisionError:
+            y = 1
 
         training_data, training_labels = self.augment_data(training_data, training_labels)
 
