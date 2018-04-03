@@ -384,7 +384,7 @@ void _EF_::EyeFinder::calculatePupilsEL(
       cv::Point(roi_r.x - roi_face.x, std::abs(roi_r.y - roi_face.y)),
       roi_r.size());
   cv::GaussianBlur(face_clone, face_clone, cv::Size(0, 0),
-                   0.015 * roi_face.width);
+                   MULTVALGAUSS * roi_face.width);
   cv::Point leftPupil_acc = findEyeCenter(face_clone, roi_l_acc, "Left Eye");
   cv::Point rightPupil_acc = findEyeCenter(face_clone, roi_r_acc, "Right Eye");
 #if EF_DEBUG

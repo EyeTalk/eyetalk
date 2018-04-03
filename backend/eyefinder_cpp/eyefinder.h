@@ -80,6 +80,7 @@ private:
   const bool showeyes = false;
   const bool clear = true;
   static const unsigned int NUM_WINS = 3;
+  const double MULTVALGAUSS = 0.005; // 0.005 when light, 0.015 when dark env
 
   cv::VideoCapture cap;
 
