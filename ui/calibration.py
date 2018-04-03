@@ -51,11 +51,13 @@ class Calibration(QGraphicsView):
         self.screen_height = self.sg.height()
 
         self.setWindowTitle("Calibration")
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setRenderHint(QPainter.Antialiasing)
 
     def initSplashScreen(self):
         self.eye_image = QPixmap('ui/pupil.jpg')
-        self.eye_image.width()
+        self.eye_image = self.eye_image.scaledToWidth(self.screen_width / 2)
         self.eye_image_item = QGraphicsPixmapItem(self.eye_image)
         x_loc = (self.screen_width - self.eye_image.width()) / 2
         y_loc = (self.screen_height - self.eye_image.height()) / 2
@@ -71,8 +73,9 @@ class Calibration(QGraphicsView):
         self.label.setFont(QFont("Arial", 200))
         self.label.setAlignment(Qt.AlignCenter)
         self.label.setAutoFillBackground(False)
+        self.label.adjustSize()
         self.label.setStyleSheet("background-color: rgba(0,0,0,0%); color: #ef6c00;")
-        self.label.move((self.screen_width - self.label.width()) / 2, self.screen_height / 2 - self.label.height() * 0.25)
+        self.label.move((self.screen_width - self.label.width()) / 2, (self.screen_height - self.label.height()) / 2)
 
         self.scene.addWidget(self.label)
         self.setScene(self.scene)
@@ -89,6 +92,8 @@ class Calibration(QGraphicsView):
     def initPreBallMessage(self):
         self.textbox = QTextEdit(self)
         self.textbox.setReadOnly(True)
+        self.textbox.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.calib_text = """
             <div>
                 <h1>We will now begin Calibration</h1>
@@ -196,6 +201,8 @@ class Calibration(QGraphicsView):
     def initPostBallMessage(self):
         self.textbox = QTextEdit(self)
         self.textbox.setReadOnly(True)
+        self.textbox.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.textbox.setFrameStyle(0)
 
         self.textbox.setHtml("""
