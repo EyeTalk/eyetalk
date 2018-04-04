@@ -331,8 +331,8 @@ class Calibration(QGraphicsView):
 
         accuracy = self.detector.current_accuracy
 
-        # if accuracy >= 0.5:
-        #     self.sendData()
+        if accuracy >= 0.6:
+            self.sendData()
 
         self.finished_calibration = True
 
