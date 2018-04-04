@@ -10,6 +10,8 @@ from keras.optimizers import SGD
 from keras.utils.np_utils import to_categorical
 from keras.callbacks import Callback, ReduceLROnPlateau, EarlyStopping
 
+from collections import deque
+
 from backend.ipc_reader import IPCReader
 
 
@@ -45,6 +47,8 @@ class GazeDetector:
         self.current_epoch = 0
         self.current_accuracy = 0.0
         self.blink_threshold = self.DEFAULT_BLINK_THRESHOLD
+
+        self.blink_deque = deque(maxlen=3)
 
     def init_cpp_backend(self):
         for _ in range(3):
@@ -110,7 +114,12 @@ class GazeDetector:
         right_eye_aspect_ratio = features[2]
 
         average_ratio = (left_eye_aspect_ratio + right_eye_aspect_ratio) / 2
-        return average_ratio < self.blink_threshold
+
+        self.blink_deque.appendleft(average_ratio)
+        all_samples = tuple(self.blink_deque)
+        smoothed_average = sum(all_samples) / len(all_samples)
+
+        return smoothed_average < self.blink_threshold
 
     @staticmethod
     def calculate_eye_ratio(eye_features):
@@ -162,7 +171,7 @@ class GazeDetector:
     def train_location_classifier(self, data, labels, num_epochs=750):
         """
         Train location classifier using data
-        :param data: a ndarray of shape(N, 30) of N rows of numerical features
+        :param data: a ndarray of shape(N, 11) of N rows of numerical features
         :param num_epochs: an integer number for how many iterations through all the data the training will do
         """
 

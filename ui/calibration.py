@@ -322,7 +322,7 @@ class Calibration(QGraphicsView):
             baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
             self.detector.set_new_blink_threshold(baseline_eye_ratio)
         except ZeroDivisionError:
-            y = 1
+            pass
 
         training_data, training_labels = self.augment_data(training_data, training_labels)
 
