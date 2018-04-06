@@ -10,7 +10,7 @@ JOKES = [
     "What's the richest kind of air? Billionaire.",
     "If God didn't want us to eat animals, he wouldn't have made them out of food.",
     "I went to buy some camouflage trousers the other day but I couldn't find any..",
-    "I bought some shoes from a drug dealer. I don't know what he laced them with, but I've been tripping all day.",
+    # "I bought some shoes from a drug dealer. I don't know what he laced them with, but I've been tripping all day.",
     "I told my girlfriend she drew her eyebrows too high. She seemed surprised.",
     "I couldn't figure out why the baseball kept getting larger. Then it hit me.",
     "What do you call a fake noodle? An Impasta",

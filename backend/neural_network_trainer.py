@@ -12,7 +12,7 @@ all_data = [k for k in cursor]
 data = [detector.extract_used_features(item['x']) for item in all_data]
 labels = [item['y'] for item in all_data]
 
-detector.train_location_classifier(data, labels, 600)
+detector.train_location_classifier(data, labels, 600, patience=50)
 detector.test_accuracy(data, labels)
 
 # write out to file

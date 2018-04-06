@@ -168,7 +168,7 @@ class GazeDetector:
         prediction_vals = self.neural_network.predict(features)
         return prediction_vals
 
-    def train_location_classifier(self, data, labels, num_epochs=750):
+    def train_location_classifier(self, data, labels, num_epochs=750, patience=100):
         """
         Train location classifier using data
         :param data: a ndarray of shape(N, 11) of N rows of numerical features
@@ -182,7 +182,7 @@ class GazeDetector:
 
         progress_callback = ProgressCallback(self)
         lr_callback = ReduceLROnPlateau(patience=25, monitor='acc')
-        stop_callback = EarlyStopping(patience=100, monitor='acc')
+        stop_callback = EarlyStopping(patience=patience, monitor='acc')
         callbacks = [progress_callback, lr_callback, stop_callback]
 
         self.neural_network.fit(np_data, categorical_labels, epochs=num_epochs, callbacks=callbacks)
