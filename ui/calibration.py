@@ -3,9 +3,9 @@ from pymongo import MongoClient
 from getpass import getuser
 from random import gauss
 from PyQt5.QtWidgets import (QGraphicsView,
-        QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit, QLabel, QBoxLayout)
+        QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit, QLabel)
 from PyQt5.QtGui import QPainter, QPixmap, QFont
-from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt, QRect)
+from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 from ui.ui_layout import build_layout_dictionary
 
 
