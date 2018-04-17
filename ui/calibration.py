@@ -3,13 +3,14 @@ from pymongo import MongoClient
 from getpass import getuser
 from random import gauss
 from PyQt5.QtWidgets import (QGraphicsView,
-        QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit)
-from PyQt5.QtGui import QPainter, QPixmap
+        QGraphicsPixmapItem, QGraphicsScene, QDesktopWidget, QTextEdit, QLabel)
+from PyQt5.QtGui import QPainter, QPixmap, QFont
 from PyQt5.QtCore import (QObject, QPointF, QTimer, pyqtProperty, Qt)
 from ui.ui_layout import build_layout_dictionary
 
 
 EACH_BUTTON_TIME = 1800
+PRE_CALIB_MSG_TIME = 8000
 
 
 class Ball(QObject):
@@ -40,7 +41,7 @@ class Calibration(QGraphicsView):
 
     def set_active(self):
         self.is_active = True
-        self.initPreBallMessage()
+        self.initSplashScreen()
 
     def initView(self):
         self.showFullScreen()
@@ -50,24 +51,85 @@ class Calibration(QGraphicsView):
         self.screen_height = self.sg.height()
 
         self.setWindowTitle("Calibration")
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setRenderHint(QPainter.Antialiasing)
 
+    def initSplashScreen(self):
+        self.eye_image = QPixmap('ui/pupil.jpg')
+        self.eye_image = self.eye_image.scaledToWidth(self.screen_width / 2)
+        self.eye_image_item = QGraphicsPixmapItem(self.eye_image)
+        x_loc = (self.screen_width - self.eye_image.width()) / 2
+        y_loc = (self.screen_height - self.eye_image.height()) / 2
+        self.eye_image_item.setPos(x_loc, y_loc)
+        self.eye_image_item.setOpacity(0.50)
+
+        self.scene = QGraphicsScene(self)
+        self.scene.setSceneRect(0, 0, self.screen_width, self.screen_height)
+        self.scene.addItem(self.eye_image_item)
+
+        self.label = QLabel()
+        self.label.setText('EyeTalk')
+        self.label.setFont(QFont("Arial", 200))
+        self.label.adjustSize()
+        self.label.setAlignment(Qt.AlignCenter)
+        self.label.setAutoFillBackground(False)
+        self.label.adjustSize()
+        self.label.setStyleSheet("background-color: rgba(0,0,0,0%); color: #ef6c00;")
+        self.label.move((self.screen_width - self.label.width()) / 2, (self.screen_height - self.label.height()) / 2)
+
+        self.scene.addWidget(self.label)
+        self.setScene(self.scene)
+
+        QTimer.singleShot(4000, self.cleanSplashScreen)
+
+    def cleanSplashScreen(self):
+        self.scene.clear()
+        del self.label
+        del self.eye_image_item
+        del self.eye_image
+        self.initPreBallMessage()
 
     def initPreBallMessage(self):
         self.textbox = QTextEdit(self)
         self.textbox.setReadOnly(True)
-        self.textbox.move(self.screen_width / 2 - self.textbox.width(), self.screen_height / 2 - self.textbox.height())
-        text = """
-            <h2>Calibration</h2>
-            <p>Please follow the red ball as it jumps around</p>
+        self.textbox.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.calib_text = """
+            <div>
+                <h1>We will now begin Calibration</h1>
+                <ul>
+                    <li>Please stare at the red ball as it jumps around</li>
+                    <li>This should last about 40 seconds total</li>
+                    <li>The user interface will open when you finish</li>
+                </ul>
+                <h1>We will start in {secs} seconds</h1>
+            </div>
+            
         """
+        self.seconds_left = int(PRE_CALIB_MSG_TIME / 1000)
 
-        self.textbox.setHtml(text)
-        self.textbox.setAlignment(Qt.AlignCenter)
+        self.textbox.setHtml(self.calib_text.format(secs=self.seconds_left))
         self.textbox.setFrameStyle(0)
-        self.textbox.show()
 
-        QTimer.singleShot(3000, self.endPreBallMessage)
+        self.textbox.show()
+        self.textbox.setLineWrapMode(0)
+
+        self.textbox.setMinimumWidth(self.textbox.document().size().width())
+        self.textbox.setMinimumHeight(self.textbox.document().size().height())
+        self.textbox.move((self.screen_width - self.textbox.width()) / 2,
+                          (self.screen_height - self.textbox.height()) / 2)
+
+        QTimer.singleShot(1000, self.update_countdown)
+
+        QTimer.singleShot(PRE_CALIB_MSG_TIME, self.endPreBallMessage)
+
+    def update_countdown(self):
+        self.seconds_left -= 1
+        self.textbox.setHtml(self.calib_text.format(secs=self.seconds_left))
+
+        if self.seconds_left > 1:
+            QTimer.singleShot(1000, self.update_countdown)
 
     def endPreBallMessage(self):
         self.textbox.deleteLater()
@@ -131,12 +193,26 @@ class Calibration(QGraphicsView):
 
         self.initPostBallMessage()
 
+    def centerTextbox(self):
+        self.textbox.setMinimumWidth(self.textbox.document().size().width())
+        self.textbox.setMinimumHeight(self.textbox.document().size().height())
+        self.textbox.move((self.screen_width - self.textbox.width()) / 2, (self.screen_height - self.textbox.height()) / 2)
+
+
     def initPostBallMessage(self):
         self.textbox = QTextEdit(self)
         self.textbox.setReadOnly(True)
+        self.textbox.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.textbox.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.textbox.setFrameStyle(0)
 
-        self.textbox.move(self.screen_width / 2 - self.textbox.width(), self.screen_height / 2 - self.textbox.height())
+        self.textbox.setHtml("""
+            <p>The data will now be sent to our database.</p>
+            <p>The data will now be sent to our database.</p>
+        """)
+
+        self.textbox.setLineWrapMode(0)
+
         self.textbox.setAlignment(Qt.AlignCenter)
         self.textbox.show()
 
@@ -150,6 +226,7 @@ class Calibration(QGraphicsView):
                 <p>Calibrating ...</p>
             """
             self.textbox.setHtml(text)
+            self.centerTextbox()
 
             thread = Thread(target=self.train_machine_learning)
             thread.start()
@@ -160,6 +237,7 @@ class Calibration(QGraphicsView):
                 <p>The data will now be sent to our database.</p>
             """
             self.textbox.setHtml(text)
+            self.centerTextbox()
             self.sendData()
 
     def endPostBallMessage(self):
@@ -235,13 +313,16 @@ class Calibration(QGraphicsView):
             training_data.append(x_vector)
             training_labels.append(y)
 
-        left_eye_ratios = [features[0][1] for features in filtered_data]
-        twenty_pct = len(left_eye_ratios) // 5
-        left_eye_ratios = sorted(left_eye_ratios)[twenty_pct: -twenty_pct]
-        right_eye_ratios = [features[0][2] for features in filtered_data]
-        right_eye_ratios = sorted(right_eye_ratios)[twenty_pct: -twenty_pct]
-        baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
-        self.detector.set_new_blink_threshold(baseline_eye_ratio)
+        try:
+            left_eye_ratios = [features[0][1] for features in filtered_data if features[1] in (2, 3, 5, 6, 7, 8)]
+            twenty_pct = len(left_eye_ratios) // 5
+            left_eye_ratios = sorted(left_eye_ratios)[twenty_pct: -twenty_pct]
+            right_eye_ratios = [features[0][2] for features in filtered_data if features[1] in (2, 3, 5, 6, 7, 8)]
+            right_eye_ratios = sorted(right_eye_ratios)[twenty_pct: -twenty_pct]
+            baseline_eye_ratio = (sum(left_eye_ratios) + sum(right_eye_ratios)) / (2 * len(left_eye_ratios))
+            self.detector.set_new_blink_threshold(baseline_eye_ratio)
+        except ZeroDivisionError:
+            pass
 
         training_data, training_labels = self.augment_data(training_data, training_labels)
 
@@ -250,7 +331,7 @@ class Calibration(QGraphicsView):
 
         accuracy = self.detector.current_accuracy
 
-        if accuracy >= 0.5:
+        if accuracy >= 0.6:
             self.sendData()
 
         self.finished_calibration = True

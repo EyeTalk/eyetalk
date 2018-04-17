@@ -21,10 +21,10 @@ class MainUIWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
         sg = QDesktopWidget().screenGeometry()
 
+        self.showFullScreen()
         self.detector = GazeDetector(load_model=True)
 
         self.screen = QPointF(sg.width(), sg.height())
-        self.showFullScreen()
 
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
